@@ -23,7 +23,7 @@ class UsersTableSeeder extends Seeder {
                 'unidade_id' => NULL,
                 'name' => 'Admin',
                 'email' => 'admin@admin.com.br',
-                'password' => '$2y$10$xwAi8kLWOAvjolopZnXS.eSXzGWZlY.HMGfJTRodxzLHpDfD8OZgi',
+                'password' => '$2y$12$ToCbmnFY0KGZT/kZ7gZmsuRpZ.eN/XEaftDLJthOGHi1aRAbzimEu',
                 'remember_token' => 'CxQxbahYNOwmRTWzs8yciRQv4JQGmQCYqIGVpUh5L66wb49KwnzqdS7leAth',
                 'tipo' => 's',
                 'created_at' => NULL,

@@ -28,9 +28,11 @@ class UnidadesController extends Controller {
                         'codigo' => isset($user->cliente->promocoes[0]) ? $user->cliente->promocoes[0]->codigo : ""
                     )
                 ], 200);
+            } else {
+                return response()->json(['success' => false, 'error' => 'E-mail ou senha inválidos'], 500);
             }
         }
 
-        return response()->json(['success' => false, 'error' => 'sem autorizacao'], 500);
+        return response()->json(['success' => false, 'error' => 'Sem autorização'], 500);
     }
 }

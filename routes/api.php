@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContatoController;
 use App\Http\Controllers\Api\DashboardController;
@@ -12,6 +14,7 @@ use App\Http\Controllers\Api\PesquisaController;
 use App\Http\Controllers\Api\PromocaoController;
 use App\Http\Controllers\Api\UnidadesController;
 use App\Http\Controllers\Api\VouchersController;
+use App\Http\Middleware\ApiGuard;
 
 // Endpoints para Agendamento
 Route::post('voucher', [VouchersController::class, 'storeVoucher']);
@@ -92,4 +95,30 @@ Route::controller(ContatoController::class)->group(function () {
 
 Route::prefix('pesquisa')->group(function () {
     Route::get('/{clientepath}/{promocaopath}', [PesquisaController::class, 'pesquisa']);
+});
+
+/**
+ * Endpoints do Admin
+ */
+Route::prefix('admin')->group(function () {
+    Route::post('login', [AdminAuthController::class, 'login']);
+
+    // Credentials needed
+    Route::middleware([ApiGuard::class])->group(function () {
+        Route::post('logout', [AdminAuthController::class, 'logout']);
+        Route::get('me', [AdminAuthController::class, 'me']);
+        Route::get('permissions', [AdminAuthController::class, 'permissions']);
+
+        // Dashboard
+        Route::prefix('dashboard')->controller(AdminDashboardController::class)->group(function () {
+            Route::get('hoje', 'hoje');
+            Route::get('ontem', 'ontem');
+            Route::get('mesAtual', 'mesAtual');
+            Route::get('mesAnterior', 'mesAnterior');
+            Route::get('geral', 'geral');
+            Route::get('grafico', 'grafico');
+            Route::get('ultimos30dias', 'ultimos30Dias');
+            Route::get('promos', 'promos');
+        });
+    });
 });
