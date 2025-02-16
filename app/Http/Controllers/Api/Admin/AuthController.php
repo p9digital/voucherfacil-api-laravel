@@ -24,7 +24,6 @@ class AuthController extends Controller {
     }
 
     return response()->json([
-      'success' => true,
       'data' => array(
         'marca' => isset($user->cliente) ? $user->cliente->razaoSocial : "Admin",
         'unidade' => isset($user->unidade) ? $user->unidade->nome : "Admin",

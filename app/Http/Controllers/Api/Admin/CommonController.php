@@ -10,18 +10,12 @@ use App\Models\Estado;
 class CommonController extends Controller {
   public function estados() {
     $estados = Estado::get();
-    return response()->json([
-      'success' => true,
-      'data' => $estados
-    ], 200);
+    return response()->json(['data' => $estados], 200);
   }
 
   public function cidades(Request $request) {
     $cidades = Cidade::where('uf', $request->estado_id)->get();
-    return response()->json([
-      'success' => true,
-      'data' => $cidades
-    ], 200);
+    return response()->json(['data' => $cidades], 200);
   }
 
   public function cidadesPromocoes() {
@@ -39,6 +33,6 @@ class CommonController extends Controller {
       }
     }
 
-    return response()->json(['data' => $cidadesFiltradas, 'success' => 200]);
+    return response()->json(['data' => $cidadesFiltradas], 200);
   }
 }

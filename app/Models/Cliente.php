@@ -32,4 +32,8 @@ class Cliente extends Model {
 	public function destaques() {
 		return $this->hasMany(Destaque::class);
 	}
+
+	public function unidades() {
+		return $this->hasMany(Unidade::class);
+	}
 }

@@ -22,9 +22,11 @@ class ClientesController extends Controller {
     $page_size = $request->page_size ? $request->page_size : 100;
     $skip = ($page - 1) * $page_size;
 
-    $clientes = Cliente::where(function ($query) use ($busca) {
-      $query->where('razaoSocial', 'like', "%$busca%")->orWhere('nomeFantasia', 'like', "%$busca%");
-    })->orderByDesc('created_at');
+    $clientes = Cliente::with('unidades')
+      ->where(function ($query) use ($busca) {
+        $query->where('razaoSocial', 'like', "%$busca%")->orWhere('nomeFantasia', 'like', "%$busca%");
+      })
+      ->orderByDesc('created_at');
 
     return response()->json([
       'count' => $clientes->count(),

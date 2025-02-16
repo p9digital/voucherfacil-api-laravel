@@ -55,7 +55,6 @@ class DashboardController extends Controller {
 			}
 
 			return response()->json([
-				'success' => true,
 				'data' => array(
 					'dia' => $hoje,
 					'agendados' => $totalHoje,
@@ -64,7 +63,7 @@ class DashboardController extends Controller {
 			], 200);
 		}
 
-		return response()->json(['success' => false, 'error' => 'Token inválido'], 500);
+		return response()->json(['error' => 'Token inválido'], 500);
 	}
 
 	public function ontem(Request $request) {
@@ -113,7 +112,6 @@ class DashboardController extends Controller {
 			}
 
 			return response()->json([
-				'success' => true,
 				'data' => array(
 					'dia' => $ontem,
 					'agendados' => $total,
@@ -122,7 +120,7 @@ class DashboardController extends Controller {
 			], 200);
 		}
 
-		return response()->json(['success' => false, 'error' => 'Token inválido'], 500);
+		return response()->json(['error' => 'Token inválido'], 500);
 	}
 
 	public function ultimos30Dias(Request $request) {
@@ -172,7 +170,6 @@ class DashboardController extends Controller {
 			}
 
 			return response()->json([
-				'success' => true,
 				'data' => array(
 					'dia' => $ultmioDia,
 					'agendados' => $total,
@@ -240,7 +237,6 @@ class DashboardController extends Controller {
 			}
 
 			return response()->json([
-				'success' => true,
 				'data' => array(
 					'total' => $total,
 					'validados' => $totalValidados,
@@ -250,7 +246,7 @@ class DashboardController extends Controller {
 			], 200);
 		}
 
-		return response()->json(['success' => false, 'error' => 'Token inválido'], 500);
+		return response()->json(['error' => 'Token inválido'], 500);
 	}
 
 	public function mesAtual(Request $request) {
@@ -315,7 +311,6 @@ class DashboardController extends Controller {
 			$mes = date_create()->format('m');
 
 			return response()->json([
-				'success' => true,
 				'data' => array(
 					'total' => $total,
 					'validados' => $totalValidados,
@@ -326,7 +321,7 @@ class DashboardController extends Controller {
 			], 200);
 		}
 
-		return response()->json(['success' => false, 'error' => 'Token inválido'], 500);
+		return response()->json(['error' => 'Token inválido'], 500);
 	}
 
 	public function mesAnterior(Request $request) {
@@ -384,7 +379,6 @@ class DashboardController extends Controller {
 			$mes = date_create("-1 month")->format('m');
 
 			return response()->json([
-				'success' => true,
 				'data' => array(
 					'total' => $total,
 					'validados' => $totalValidados,
@@ -394,7 +388,7 @@ class DashboardController extends Controller {
 			], 200);
 		}
 
-		return response()->json(['success' => false, 'error' => 'Token inválido'], 500);
+		return response()->json(['error' => 'Token inválido'], 500);
 	}
 
 	public function grafico(Request $request) {
@@ -441,27 +435,21 @@ class DashboardController extends Controller {
 				}
 			}
 
-			return response()->json([
-				'success' => true,
-				'data' => array('grafico' => $grafico)
-			], 200);
+			return response()->json(['data' => $grafico], 200);
 		}
 
-		return response()->json(['success' => false, 'error' => 'Token inválido'], 500);
+		return response()->json(['error' => 'Token inválido'], 500);
 	}
 
 	public function promos(Request $request) {
 		$user = $request->user();
 
-		if ($user) {
+		$promocoes = Promocao::get();
+		if ($user->tipo === 'a') {
 			$promocoes = Promocao::where("cliente_id", $user->cliente_id)->get();
-
-			return response()->json([
-				'success' => true,
-				'data' => array('promocoes' => $promocoes)
-			], 200);
 		}
-
-		return response()->json(['success' => false, 'error' => 'Token inválido'], 500);
+		return response()->json([
+			'data' => $promocoes
+		], 200);
 	}
 }

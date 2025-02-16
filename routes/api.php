@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Admin\CommonController as AdminCommonController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\UnidadesController as AdminUnidadesController;
 use App\Http\Controllers\Api\Admin\UsuariosController as AdminUsuariosController;
+use App\Http\Controllers\Api\Admin\VouchersController as AdminVouchersController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContatoController;
 use App\Http\Controllers\Api\DashboardController;
@@ -163,6 +164,12 @@ Route::prefix('admin')->group(function () {
       Route::get('{usuario}', 'retrieve');
       Route::patch('{usuario}', 'update');
       Route::delete('{usuario}', 'destroy');
+    });
+
+    // Vouchers
+    Route::prefix('vouchers')->controller(AdminVouchersController::class)->group(function () {
+      Route::get('/', 'list');
+      Route::post('validar', 'validar');
     });
   });
 });
