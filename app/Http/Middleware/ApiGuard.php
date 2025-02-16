@@ -25,6 +25,6 @@ class ApiGuard {
         return $next($request);
       }
     }
-    return response()->json(collect(['message' => 'Unauthorized']), 401);
+    return response()->json(collect(['error' => 'Unauthorized']), 401);
   }
 }

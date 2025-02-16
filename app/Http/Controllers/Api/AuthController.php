@@ -24,10 +24,10 @@ class AuthController extends Controller {
         $user = Auth::user();
 
         if (!$user) {
-            return response()->json(['success' => false, 'error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return response()->json(['success' => true, 'data' => $user], 200);
+        return response()->json(['data' => $user], 200);
     }
 
 
