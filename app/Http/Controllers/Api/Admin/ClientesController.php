@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Cliente;
-use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Http\Controllers\Controller;
+use App\Models\Cliente;
 
 class ClientesController extends Controller {
   public function list(Request $request) {
@@ -17,19 +17,18 @@ class ClientesController extends Controller {
     if ($user->tipo !== 's')
       return response()->json(['error' => 'Unauthorized'], 401);
 
-    Log::info($request);
     $busca = $request->busca ? $request->busca : '';
     $page = $request->page ? $request->page : 1;
     $page_size = $request->page_size ? $request->page_size : 100;
     $skip = ($page - 1) * $page_size;
-  
+
     $clientes = Cliente::where(function ($query) use ($busca) {
       $query->where('razaoSocial', 'like', "%$busca%")->orWhere('nomeFantasia', 'like', "%$busca%");
     })->orderByDesc('created_at');
 
     return response()->json([
       'count' => $clientes->count(),
-      'data' => $clientes->skip($skip)->take($page_size)->get()
+      'data' => $request->all ? $clientes->get() : $clientes->skip($skip)->take($page_size)->get()
     ]);
   }
 

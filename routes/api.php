@@ -3,8 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Admin\AuthController as AdminAuthController;
-use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\ClientesController as AdminClientesController;
+use App\Http\Controllers\Api\Admin\CommonController as AdminCommonController;
+use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Api\Admin\UnidadesController as AdminUnidadesController;
+use App\Http\Controllers\Api\Admin\UsuariosController as AdminUsuariosController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContatoController;
 use App\Http\Controllers\Api\DashboardController;
@@ -104,6 +107,19 @@ Route::prefix('pesquisa')->group(function () {
 Route::prefix('admin')->group(function () {
   Route::post('login', [AdminAuthController::class, 'login']);
 
+  // Common routes
+  Route::prefix('common')->controller(AdminCommonController::class)->group(function () {
+    // Cidades
+    Route::prefix('cidades')->group(function () {
+      Route::get('/', 'cidades');
+    });
+
+    // Estados
+    Route::prefix('estados')->group(function () {
+      Route::get('/', 'estados');
+    });
+  });
+
   // Credentials needed
   Route::middleware([ApiGuard::class])->group(function () {
     Route::post('logout', [AdminAuthController::class, 'logout']);
@@ -129,6 +145,24 @@ Route::prefix('admin')->group(function () {
       Route::get('{cliente}', 'retrieve');
       Route::patch('{cliente}', 'update');
       Route::delete('{cliente}', 'destroy');
+    });
+
+    // Unidades
+    Route::prefix('unidades')->controller(AdminUnidadesController::class)->group(function () {
+      Route::get('/', 'list');
+      Route::post('/', 'store');
+      Route::get('{unidade}', 'retrieve');
+      Route::patch('{unidade}', 'update');
+      Route::delete('{unidade}', 'destroy');
+    });
+
+    // Usuários
+    Route::prefix('usuarios')->controller(AdminUsuariosController::class)->group(function () {
+      Route::get('/', 'list');
+      Route::post('/', 'store');
+      Route::get('{usuario}', 'retrieve');
+      Route::patch('{usuario}', 'update');
+      Route::delete('{usuario}', 'destroy');
     });
   });
 });

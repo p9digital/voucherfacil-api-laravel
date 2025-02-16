@@ -8,40 +8,41 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+  /** @use HasFactory<\Database\Factories\UserFactory> */
+  use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = ['cliente_id', 'unidade_id', 'name', 'email', 'password', 'tipo', 'status'];
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var list<string>
+   */
+  protected $fillable = ['cliente_id', 'unidade_id', 'name', 'email', 'password', 'tipo', 'status'];
+  protected $guarded = ['id', 'created_at', 'update_at'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = ['password', 'remember_token'];
+  /**
+   * The attributes that should be hidden for serialization.
+   *
+   * @var list<string>
+   */
+  protected $hidden = ['password', 'remember_token'];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array {
-        return [
-            // 'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+  /**
+   * Get the attributes that should be cast.
+   *
+   * @return array<string, string>
+   */
+  protected function casts(): array {
+    return [
+      // 'email_verified_at' => 'datetime',
+      'password' => 'hashed',
+    ];
+  }
 
-    public function cliente() {
-        return $this->hasOne(Cliente::class, "id", "cliente_id");
-    }
+  public function cliente() {
+    return $this->hasOne(Cliente::class, "id", "cliente_id");
+  }
 
-    public function unidade() {
-        return $this->hasOne(Unidade::class, "id", "unidade_id");
-    }
+  public function unidade() {
+    return $this->hasOne(Unidade::class, "id", "unidade_id");
+  }
 }
