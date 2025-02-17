@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Api\Admin\ClientesController as AdminClientesController;
 use App\Http\Controllers\Api\Admin\CommonController as AdminCommonController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Api\Admin\PromocoesController as AdminPromocoesController;
 use App\Http\Controllers\Api\Admin\UnidadesController as AdminUnidadesController;
 use App\Http\Controllers\Api\Admin\UsuariosController as AdminUsuariosController;
 use App\Http\Controllers\Api\Admin\VouchersController as AdminVouchersController;
@@ -136,7 +137,6 @@ Route::prefix('admin')->group(function () {
       Route::get('geral', 'geral');
       Route::get('grafico', 'grafico');
       Route::get('ultimos30dias', 'ultimos30Dias');
-      Route::get('promos', 'promos');
     });
 
     // Clientes
@@ -146,6 +146,15 @@ Route::prefix('admin')->group(function () {
       Route::get('{cliente}', 'retrieve');
       Route::patch('{cliente}', 'update');
       Route::delete('{cliente}', 'destroy');
+    });
+
+    // Promoções
+    Route::prefix('promocoes')->controller(AdminPromocoesController::class)->group(function () {
+      Route::get('/', 'list');
+      Route::post('/', 'store');
+      Route::get('{promocao}', 'retrieve');
+      Route::patch('{promocao}', 'update');
+      Route::delete('{promocao}', 'destroy');
     });
 
     // Unidades

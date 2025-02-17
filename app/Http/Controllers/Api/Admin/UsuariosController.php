@@ -39,8 +39,7 @@ class UsuariosController extends Controller {
   public function retrieve(Request $request, User $usuario) {
     $user = $request->user();
     if (
-      ($user->tipo !== 's' && $user->tipo !== 'a')
-      || ($user->tipo === 'a' && ($usuario->tipo === 's' || $user->cliente_id !== $usuario->cliente_id))
+      ($user->tipo === 'a' && ($usuario->tipo === 's' || $user->cliente_id !== $usuario->cliente_id))
       || ($user->tipo === 'f' && $user->id !== $usuario->id)
     )
       return response()->json(['error' => 'Unauthorized'], 401);

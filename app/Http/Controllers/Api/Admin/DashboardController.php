@@ -440,16 +440,4 @@ class DashboardController extends Controller {
 
 		return response()->json(['error' => 'Token inválido'], 500);
 	}
-
-	public function promos(Request $request) {
-		$user = $request->user();
-
-		$promocoes = Promocao::get();
-		if ($user->tipo === 'a') {
-			$promocoes = Promocao::where("cliente_id", $user->cliente_id)->get();
-		}
-		return response()->json([
-			'data' => $promocoes
-		], 200);
-	}
 }
