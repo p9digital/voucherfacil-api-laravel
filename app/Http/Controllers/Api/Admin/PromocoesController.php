@@ -20,4 +20,15 @@ class PromocoesController extends Controller {
     }
     return response()->json(['data' => $promocoes], 200);
   }
+
+  public function retrieve(Request $request, Promocao $promocao) {
+    $user = $request->user();
+    if (
+      ($user->tipo === 'f')
+      || ($user->tipo === 'a' && $user->cliente_id !== $promocao->cliente_id)
+    )
+      return response()->json(['error' => 'Unauthorized'], 401);
+
+    return response()->json(['data' => $promocao]);
+  }
 }

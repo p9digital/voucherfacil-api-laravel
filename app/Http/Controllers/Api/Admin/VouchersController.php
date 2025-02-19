@@ -67,7 +67,10 @@ class VouchersController extends Controller {
           return response()->json(['error' => 'Erro ao validar voucher'], 500);
         }
       } else {
-        return response()->json(['error' => 'Voucher já validado'], 500);
+        $dataUpdateArray = explode(" ", $lead->updated_at);
+        $diaUpdateArray = explode("-", $dataUpdateArray[0]);
+        $dataUpdate = $diaUpdateArray[2] . "/" . $diaUpdateArray[1] . "/" . $diaUpdateArray[0] . " " . $dataUpdateArray[1];
+        return response()->json(['error' => "Voucher já validado", 'data' => $dataUpdate], 500);
       }
     } else {
       return response()->json(['error' => 'Voucher inválido'], 500);
