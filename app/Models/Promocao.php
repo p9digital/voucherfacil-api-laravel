@@ -6,7 +6,36 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Promocao extends Model {
-	protected $fillable = ['cliente_id', 'titulo', 'path', 'resumo', 'descricao', 'regras', 'desconto', 'valor', 'codigo', 'dataInicio', 'dataFim', 'dataPublicacao', 'pessoas', 'periodo', 'agendamento', 'limite', 'imagem', 'metaDescription', 'metaKeywords', 'codigosAcompanhamento', 'codigosConversao', 'codigosAnalytics', 'status', 'limite_usuario', 'limite_vouchers', 'pesquisa', 'pesquisas'];
+	protected $fillable = [
+		'cliente_id',
+		'titulo',
+		'path',
+		'resumo',
+		'descricao',
+		'regras',
+		'desconto',
+		'valor',
+		'codigo',
+		'dataInicio',
+		'dataFim',
+		'dataPublicacao',
+		'pessoas',
+		'periodo',
+		'agendamento',
+		'limite',
+		'imagem',
+		'metaDescription',
+		'metaKeywords',
+		'codigosAcompanhamento',
+		'codigosConversao',
+		'codigosAnalytics',
+		'mostrar',
+		'status',
+		'limite_usuario',
+		'limite_vouchers',
+		'pesquisa',
+		'pesquisas'
+	];
 	protected $guarded = ['id', 'created_at', 'update_at'];
 	protected $table = 'promocoes';
 
