@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Models\Estado;
+use App\Models\Periodo;
 use App\Models\Unidade;
 
 class UnidadesController extends Controller {
@@ -115,6 +116,40 @@ class UnidadesController extends Controller {
       }
 
       return response()->json(['message' => 'Unidade removida com sucesso!'], 200);
+    }
+
+    return response()->json(['error' => 'Unauthorized'], 401);
+  }
+
+  // Períodos
+  public function storePeriodos(Request $request, Unidade $unidade) {
+    $user = $request->user();
+
+    if ($user->tipo !== 's')
+      return response()->json(['error' => 'Unauthorized'], 401);
+
+    foreach ($request->periodos as $periodo) {
+      if (isset($periodo['id'])) {
+        $atualizarPeriodo = Periodo::find($periodo['id']);
+        $atualizarPeriodo->fill($periodo);
+        $atualizarPeriodo->save();
+      } else {
+        $novoPeriodo = new Periodo($periodo);
+        $novoPeriodo->save();
+      }
+    }
+
+    return response()->json(['message' => "Unidade salva com sucesso!", 'data' => $unidade]);
+  }
+
+  public function destroyPeriodo(Request $request, Unidade $unidade, Periodo $periodo) {
+    $user = $request->user();
+    if ($user->tipo === 's') {
+      if (!$periodo->delete()) {
+        Log::error('Período NÃO deletado', ['nome' => $periodo->nome]);
+      }
+
+      return response()->json(['message' => 'Período removido com sucesso!'], 200);
     }
 
     return response()->json(['error' => 'Unauthorized'], 401);

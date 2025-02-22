@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Periodo extends Model {
-    protected $fillable = ['unidade_id', 'nome', 'periodo', 'status'];
+    protected $fillable = ['promocaounidade_id', 'nome', 'periodo', 'ordem', 'status'];
     protected $guarded = ['id', 'created_at', 'update_at'];
     protected $table = 'periodos';
 

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Foto extends Model {
-    protected $fillable = ['promocao_id', 'arquivo', 'ordem'];
+    protected $fillable = ['promocao_id', 'arquivo', 'ordem', 'foto_mob_xs', 'foto_mob', 'foto_card', 'foto_desk', 'foto_desk_xl'];
     protected $guarded = ['id', 'created_at', 'update_at'];
     protected $table = 'fotos';
 

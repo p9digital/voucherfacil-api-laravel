@@ -69,6 +69,7 @@ Route::prefix('admin')->group(function () {
       Route::patch('{promocao}', 'update');
       Route::delete('{promocao}', 'destroy');
       Route::post('{promocao}/unidades', 'storePromocaoUnidades');
+      Route::post('{promocao}/fotos', 'storeFotos');
     });
 
     // Unidades
@@ -78,6 +79,9 @@ Route::prefix('admin')->group(function () {
       Route::get('{unidade}', 'retrieve');
       Route::patch('{unidade}', 'update');
       Route::delete('{unidade}', 'destroy');
+      // Períodos da unidade
+      Route::post('{unidade}/periodos', 'storePeriodos');
+      Route::delete('{unidade}/periodos/{periodo}', 'destroyPeriodo');
     });
 
     // Usuários
