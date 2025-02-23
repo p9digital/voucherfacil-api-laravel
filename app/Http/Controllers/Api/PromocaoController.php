@@ -2,36 +2,68 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Promocao;
 use App\Models\Cliente;
 use App\Models\Cidade;
 use App\Models\Lead;
 use App\Models\Foto;
+use App\Models\PromocaoUnidade;
+use App\Models\Unidade;
 
 class PromocaoController extends Controller {
-	public function todas() {
-		$hoje = date("Y-m-d H:i:s");
+	public function list(Request $request) {
+		// $hoje = date("Y-m-d H:i:s");
 
 		$promocoes = Promocao::where([
-			// ['dataInicio', '<=', $hoje],
-			// ["dataFim", '>', $hoje],
+			// ["dataInicio", "<=", $hoje],
+			// ["dataFim", ">", $hoje],
 			["pesquisa", "0"],
 			["mostrar", "1"],
 			["status", "1"]
 		])
-			->with('cliente', 'unidades', 'cidades', 'fotos')
+			->with('cliente', 'unidades', 'cidades', 'fotos');
+		if ($request->clientePath) {
+			$promocoes = $promocoes->whereHas("cliente", function ($query) use ($request) {
+				$query->where("path", $request->clientePath);
+			});
+		}
+		$promocoes = $promocoes->orderBy("dataFim", "desc")
+			->orderBy("dataInicio", "desc");
+
+		return response()->json(['data' => $promocoes->get()], 200);
+	}
+
+	public function cidade(Request $request) {
+		$hoje = date("Y-m-d H:i:s");
+		$promocaoUnidades = PromocaoUnidade::join("unidades", "promocoes_unidades.unidade_id", "=", "unidades.id")
+			->join("cidades", "unidades.cidade_id", "=", "cidades.id")
+			->where([
+				['cidades.path', $request->cidadePath],
+				['cidades.uf', $request->uf]
+			])
+			->get();
+		$promocaoIds = $promocaoUnidades->pluck("promocao_id")->toArray();
+
+		$promocoes = Promocao::with('cliente', 'unidades', 'cidades', 'fotos')
+			->where([
+				// ['dataInicio', '<=', $hoje],
+				// ["dataFim", '>', $hoje],
+				["mostrar", "1"],
+				["pesquisa", "0"],
+				["status", "1"]
+			])
+			->whereIn('id', $promocaoIds)
 			->orderBy("dataFim", "desc")
 			->orderBy("dataInicio", "desc")->get();
 
-		return response()->json([
-			'success' => true,
-			'promocoes' => $promocoes
-		]);
+		return response()->json(['data' => $promocoes], 200);
 	}
 
+	// OLD ACTIONS
 	public function promocoesPorCidades($uf, $path) {
 		$cidade = Cidade::where([
 			['path', '=', $path],

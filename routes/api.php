@@ -11,10 +11,45 @@ use App\Http\Controllers\Api\Admin\PromocoesController as AdminPromocoesControll
 use App\Http\Controllers\Api\Admin\UnidadesController as AdminUnidadesController;
 use App\Http\Controllers\Api\Admin\UsuariosController as AdminUsuariosController;
 use App\Http\Controllers\Api\Admin\VouchersController as AdminVouchersController;
+use App\Http\Controllers\Api\CidadesController;
+use App\Http\Controllers\Api\ClienteController;
+use App\Http\Controllers\Api\DestaqueController;
+use App\Http\Controllers\Api\PromocaoController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return $request->user();
 });
+
+// Cidades
+Route::prefix('cidades')->controller(CidadesController::class)->group(function () {
+  Route::get('/', 'list');
+  Route::get('retrieve', 'retrieve');
+});
+
+// Clientes
+Route::prefix('clientes')->controller(ClienteController::class)->group(function () {
+  Route::get('{clientePath}', 'retrieve');
+});
+
+// Destaques
+Route::prefix('destaques')->controller(DestaqueController::class)->group(function () {
+  Route::get('/', 'list');
+});
+
+// Promoções
+Route::prefix('promocoes')->controller(PromocaoController::class)->group(function () {
+  Route::get('/', 'list');
+  Route::get('cidade', 'cidade');
+});
+
+// Route::get('estados/{uf}/cidades/{path}/promocoes', 'promocoesPorCidades');
+// Route::get('clientes/{path}/promocoes', 'promocoesPorClientes');
+// Route::get('clientes/{clientePath}/cidade/{cidadePath}/promocoes', 'promocoesPorClientesECidade');
+
+// // Endpoint que retorna cidades com promoções
+// Route::post('promocao/limite-vouchers', 'atualizaLimiteDeVouchers');
+// // Endpoints que retornam um promoção
+// Route::get('clientes/{clientepath}/promocoes/{promocaopath}', 'promocao');
 
 /**
  * Endpoints do Admin

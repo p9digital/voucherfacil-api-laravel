@@ -132,7 +132,7 @@ class PromocoesController extends Controller {
         $nameFile = "{$name}.{$extension}";
         // $fileBannerDesktopXl->storeAs("", $nameFile);
         //resize crop image
-        $this->resizeCrop($fileBannerDesktopXl, $promocaoUrl, $nameFile, $extension, 1920, 700);
+        $this->resizeCrop($fileBannerDesktopXl, $promocaoUrl, $nameFile, 1920, 700);
       }
       if ($request->bannerDesktop) {
         $name = "banner-1100x600";
@@ -142,7 +142,7 @@ class PromocoesController extends Controller {
         $nameFile = "{$name}.{$extension}";
         // $fileBannerDesktop->storeAs("", $nameFile);
         //resize crop image
-        $this->resizeCrop($fileBannerDesktop, $promocaoUrl, $nameFile, $extension, 1100, 600);
+        $this->resizeCrop($fileBannerDesktop, $promocaoUrl, $nameFile, 1100, 600);
       }
       if ($request->bannerMobile) {
         $name = "banner-750x420";
@@ -152,7 +152,7 @@ class PromocoesController extends Controller {
         $nameFile = "{$name}.{$extension}";
         // $fileBannerMobile->storeAs("", $nameFile);
         //resize crop image
-        $this->resizeCrop($fileBannerMobile, $promocaoUrl, $nameFile, $extension, 750, 420);
+        $this->resizeCrop($fileBannerMobile, $promocaoUrl, $nameFile, 750, 420);
       }
 
       if (!$request->foto_id) {
@@ -174,37 +174,15 @@ class PromocoesController extends Controller {
     }
 
     $path = storage_path("app/public/" . $promocao->cliente->path . "/" . $promocao->path);
-    File::makeDirectory($path, $mode = 0777, true, true);
+    File::makeDirectory($path, 0777, true, true);
 
     return response()->json(['message' => "Fotos cadastradas com sucesso!", 'data' => $promocao]);
   }
 
-  private function resizeCrop($image, $promocaoUrl, $nameFile, $extension, $width, $height) {
+  private function resizeCrop($image, $promocaoUrl, $nameFile, $width, $height) {
     $manager = new ImageManager(Driver::class);
     $img = $manager->read($image);
-    $dim = (intval($img->width()) / intval($img->height())) - ($width / $height);
-
-    if ($dim > 0) {
-      $img->resize($width, null, function ($constraint) {
-        $constraint->aspectRatio();
-      });
-      if ($extension == "png") {
-        $img->resize($width, null, 'center', true, 'rgba(0, 0, 0, 0)');
-      } else {
-        $img->resize($width, null, 'center', true, 'ffffff');
-      }
-    } else {
-      $img->resize(null, $height, function ($constraint) {
-        $constraint->aspectRatio();
-      });
-
-      if ($extension == "png") {
-        $img->resize(null, $height, 'center', true, 'rgba(0, 0, 0, 0)');
-      } else {
-        $img->resize(null, $height, 'center', true, 'ffffff');
-      }
-    }
-    $img->crop($width, $height);
+    $img->cover($width, $height);
     $img->save(storage_path('app/public/' . $promocaoUrl . $nameFile));
     return $nameFile;
   }

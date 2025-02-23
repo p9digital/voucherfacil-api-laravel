@@ -55,21 +55,40 @@ class ClientesController extends Controller {
     ])->validate();
 
     $cliente = new Cliente($request->all());
+    $salvo = $cliente->save();
+
+    $path = storage_path("app/public/" . $cliente->path . "/");
+    File::makeDirectory($path, 0777, true, true);
 
     if ($request->logo) {
       $name = uniqid(date('HisYmd'));
       $extension = $request->file('logo')->getClientOriginalExtension();
       $nameFile = "{$name}.{$extension}";
       $cliente->logo = $nameFile;
-      $request->file('logo')->storeAs("", $nameFile);
+      // $request->file('logo')->storeAs("", $nameFile);
       //resize crop image
-      $cliente->logo = $this->resizeCrop($request->file('logo'));
+      $this->resizeCrop($request->file('logo'), $cliente->path, $nameFile, 170, 90);
+    }
+    if ($request->bannerDesktop) {
+      $name = "banner1920";
+      $extension = $request->file('bannerDesktop')->getClientOriginalExtension();
+      $nameFile = "{$name}.{$extension}";
+      $cliente->bannerDesktop = $nameFile;
+      // $request->file('bannerDesktop')->storeAs("", $nameFile);
+      //resize crop image
+      $this->resizeCrop($request->file('bannerDesktop'), $cliente->path, $nameFile, 1920, 700);
+    }
+    if ($request->bannerMobile) {
+      $name = "banner750";
+      $extension = $request->file('bannerMobile')->getClientOriginalExtension();
+      $nameFile = "{$name}.{$extension}";
+      $cliente->bannerMobile = $nameFile;
+      // $request->file('bannerMobile')->storeAs("", $nameFile);
+      //resize crop image
+      $this->resizeCrop($request->file('bannerMobile'), $cliente->path, $nameFile, 750, 400);
     }
 
     $salvo = $cliente->save();
-
-    $path = storage_path("app/public/" . $cliente->path . "/");
-    File::makeDirectory($path, $mode = 0777, true, true);
 
     if (!$salvo) {
       Log::error('Cliente NÃO salvo', ['razaoSocial' => $cliente->razaoSocial, 'nomeFantasia' => $cliente->nomeFantasia]);
@@ -94,9 +113,21 @@ class ClientesController extends Controller {
       $name = uniqid(date('HisYmd'));
       $extension = $request->file('logo')->getClientOriginalExtension();
       $nameFile = "{$name}.{$extension}";
+      $cliente->logo = $nameFile;
       $request->file('logo')->storeAs("", $nameFile);
-      //resize crop image
-      $cliente->logo = $this->resizeCrop($request->file('logo'));
+      $this->resizeCrop($request->file('logo'), $cliente->path, $nameFile, 170, 90);
+    }
+    if ($request->bannerDesktop) {
+      $name = "banner1920";
+      $extension = $request->file('bannerDesktop')->getClientOriginalExtension();
+      $nameFile = "{$name}.{$extension}";
+      $this->resizeCrop($request->file('bannerDesktop'), $cliente->path, $nameFile, 1920, 700);
+    }
+    if ($request->bannerMobile) {
+      $name = "banner750";
+      $extension = $request->file('bannerMobile')->getClientOriginalExtension();
+      $nameFile = "{$name}.{$extension}";
+      $this->resizeCrop($request->file('bannerMobile'), $cliente->path, $nameFile, 750, 400);
     }
 
     $atualizado = $cliente->save();
@@ -122,37 +153,11 @@ class ClientesController extends Controller {
     return response()->json(['error' => 'Unauthorized'], 401);
   }
 
-  private function resizeCrop($image) {
-    $name = uniqid(date('HisYmd'));
-    $extension = $image->getClientOriginalExtension();
-    $nameFile = "{$name}.{$extension}";
-
+  private function resizeCrop($image, $path, $nameFile, $width, $height) {
     $manager = new ImageManager(Driver::class);
     $img = $manager->read($image);
-    $dim = (intval($img->width()) / intval($img->height())) - (170 / 90);
-
-    if ($dim > 0) {
-      $img->resize(170, null, function ($constraint) {
-        $constraint->aspectRatio();
-      });
-      if ($extension == "png") {
-        $img->resize(170, null, 'center', true, 'rgba(0, 0, 0, 0)');
-      } else {
-        $img->resize(170, null, 'center', true, 'ffffff');
-      }
-    } else {
-      $img->resize(null, 90, function ($constraint) {
-        $constraint->aspectRatio();
-      });
-
-      if ($extension == "png") {
-        $img->resize(null, 90, 'center', true, 'rgba(0, 0, 0, 0)');
-      } else {
-        $img->resize(null, 90, 'center', true, 'ffffff');
-      }
-    }
-    $img->crop(170, 90);
-    $img->save(storage_path('app/public/' . $nameFile));
+    $img->cover($width, $height);
+    $img->save(storage_path("app/public/$path/$nameFile"));
     return $nameFile;
   }
 }
