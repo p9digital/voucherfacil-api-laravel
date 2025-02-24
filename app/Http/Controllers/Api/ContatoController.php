@@ -9,64 +9,51 @@ use App\Models\Contato;
 use App\Models\Empresa;
 
 class ContatoController extends Controller {
+  public function store(Request $request) {
+    $request->validate([
+      'assunto' => 'required',
+      'nome' => 'required',
+      'email' => 'required|email',
+      'telefone' => 'required',
+      'mensagem' => 'required'
+    ], [
+      'required' => "O campo é obrigatório",
+      'email' => "E-mail inválido"
+    ]);
 
-    public function storeContato(Request $request) {
-        $validatedData = $request->validate([
-            'nome' => 'required',
-            'email' => 'required|email',
-            'telefone' => 'required',
-            'mensagem' => 'required'
-        ], [
-            'required' => "O campo é obrigatório",
-            'email' => "E-mail inválido"
-        ]);
+    $contato = new Contato($request->all());
+    if ($contato->save()) {
+      if (config('app.env') === "production") {
+        Mail::to(['comercial@voucherfacil.com.br'])
+          ->bcc('notificacoesleads@publi9.com.br')
+          ->queue(new \App\Mail\Contato($contato));
+      } else {
+        Mail::to(['dev@p9.digital'])
+          ->queue(new \App\Mail\Contato($contato));
+      }
 
-        $contato = new Contato($request->all());
-
-        if ($contato->save()) {
-            if (config('app.env') === "production") {
-                Mail::to(['comercial@voucherfacil.com.br'])
-                    ->bcc('notificacoesleads@publi9.com.br')
-                    ->queue(new \App\Mail\Contato($contato));
-            } else {
-                Mail::to(['heitor.hatakeyama@publi9.com.br'])
-                    ->queue(new \App\Mail\Contato($contato));
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $contato,
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => false,
-                'data' => 'error',
-            ], 200);
-        }
+      return response()->json(['data' => $contato], 200);
+    } else {
+      return response()->json(['error' => 'Erro ao salvar o contato'], 500);
     }
+  }
 
-    public function storeEmpresa(Request $request) {
-        $divulgue = new Empresa($request->all());
+  public function storeEmpresa(Request $request) {
+    $divulgue = new Empresa($request->all());
 
-        if ($divulgue->save()) {
-            if (config('app.env') === "production") {
-                Mail::to(['comercial@voucherfacil.com.br'])
-                    ->bcc('notificacoesleads@publi9.com.br')
-                    ->queue(new \App\Mail\Divulgue($divulgue));
-            } else {
-                Mail::to(['heitor.hatakeyama@publi9.com.br'])
-                    ->queue(new \App\Mail\Divulgue($divulgue));
-            }
+    if ($divulgue->save()) {
+      if (config('app.env') === "production") {
+        Mail::to(['comercial@voucherfacil.com.br'])
+          ->bcc('notificacoesleads@publi9.com.br')
+          ->queue(new \App\Mail\Divulgue($divulgue));
+      } else {
+        Mail::to(['dev@p9.digital'])
+          ->queue(new \App\Mail\Divulgue($divulgue));
+      }
 
-            return response()->json([
-                'success' => true,
-                'data' => $divulgue,
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => false,
-                'data' => 'error',
-            ], 200);
-        }
+      return response()->json(['data' => $divulgue], 200);
+    } else {
+      return response()->json(['error' => 'Erro ao salvar o contato da empresa'], 500);
     }
+  }
 }

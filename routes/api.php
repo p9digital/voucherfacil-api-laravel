@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Admin\UsuariosController as AdminUsuariosController
 use App\Http\Controllers\Api\Admin\VouchersController as AdminVouchersController;
 use App\Http\Controllers\Api\CidadesController;
 use App\Http\Controllers\Api\ClienteController;
+use App\Http\Controllers\Api\ContatoController;
 use App\Http\Controllers\Api\DestaqueController;
 use App\Http\Controllers\Api\PromocaoController;
 
@@ -31,6 +32,12 @@ Route::prefix('clientes')->controller(ClienteController::class)->group(function 
   Route::get('{clientePath}', 'retrieve');
 });
 
+// Contatos
+Route::controller(ContatoController::class)->group(function () {
+  Route::post('contato', 'store');
+  Route::post('contato-empresa', 'storeEmpresa');
+});
+
 // Destaques
 Route::prefix('destaques')->controller(DestaqueController::class)->group(function () {
   Route::get('/', 'list');
@@ -41,15 +48,6 @@ Route::prefix('promocoes')->controller(PromocaoController::class)->group(functio
   Route::get('/', 'list');
   Route::get('cidade', 'cidade');
 });
-
-// Route::get('estados/{uf}/cidades/{path}/promocoes', 'promocoesPorCidades');
-// Route::get('clientes/{path}/promocoes', 'promocoesPorClientes');
-// Route::get('clientes/{clientePath}/cidade/{cidadePath}/promocoes', 'promocoesPorClientesECidade');
-
-// // Endpoint que retorna cidades com promoções
-// Route::post('promocao/limite-vouchers', 'atualizaLimiteDeVouchers');
-// // Endpoints que retornam um promoção
-// Route::get('clientes/{clientepath}/promocoes/{promocaopath}', 'promocao');
 
 /**
  * Endpoints do Admin
