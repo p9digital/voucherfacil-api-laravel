@@ -22,7 +22,7 @@ class Promocao extends Model {
 		'pessoas',
 		'periodo',
 		'agendamento',
-		'limite',
+		'limite', // Limite total de vouchers permitidos
 		'imagem',
 		'metaDescription',
 		'metaKeywords',
@@ -31,8 +31,8 @@ class Promocao extends Model {
 		'codigosAnalytics',
 		'mostrar',
 		'status',
-		'limite_usuario',
-		'limite_vouchers',
+		'limite_usuario', // Limite total de vouchers permitidos por usuário
+		'limite_vouchers', // Limite total de vouchers permitidos
 		'pesquisa',
 		'pesquisas'
 	];

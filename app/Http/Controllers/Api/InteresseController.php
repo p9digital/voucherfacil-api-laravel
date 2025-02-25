@@ -14,24 +14,17 @@ class InteresseController extends Controller {
     $promocao = Promocao::where("id", "=", $interesse->promocao_id)->first();
 
     if (!$interesse->save()) {
-      return response()->json([
-        'success' => false,
-        'data' => 'erro',
-      ], 200);
+      return response()->json(['data' => 'erro'], 500);
     }
 
     if (config('app.env') === "production") {
       Mail::to(["notificacaoleads@p9.digital"])
         ->queue(new \App\Mail\Interesse($interesse, $promocao));
     } else {
-      Mail::to(["teste@p9.digital"])
+      Mail::to(["dev@p9.digital"])
         ->queue(new \App\Mail\Interesse($interesse, $promocao));
     }
 
-
-    return response()->json([
-      'success' => true,
-      'data' => $interesse,
-    ], 200);
+    return response()->json(['data' => $interesse], 200);
   }
 }

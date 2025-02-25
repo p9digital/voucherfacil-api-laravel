@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\ContatoController;
 use App\Http\Controllers\Api\DestaqueController;
 use App\Http\Controllers\Api\PromocaoController;
+use App\Http\Controllers\InteresseController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return $request->user();
@@ -43,10 +44,16 @@ Route::prefix('destaques')->controller(DestaqueController::class)->group(functio
   Route::get('/', 'list');
 });
 
+// Interesse
+Route::prefix('interesse')->controller(InteresseController::class)->group(function () {
+  Route::post('/', 'store');
+});
+
 // Promoções
 Route::prefix('promocoes')->controller(PromocaoController::class)->group(function () {
   Route::get('/', 'list');
   Route::get('cidade', 'cidade');
+  Route::get('{clientePath}/{promocaoPath}', 'retrieve');
 });
 
 /**
