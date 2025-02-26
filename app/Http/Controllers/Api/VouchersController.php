@@ -292,21 +292,12 @@ class VouchersController extends Controller {
         $this->sendMailLeadAgendamento($lead, $promo, $unidade, $date, $per->nome);
         $this->sendMailVoucher($lead, $promo, $unidade, $date, $per->nome);
 
-        return response()->json([
-          'success' => true,
-          'data' => $lead,
-        ], 200);
+        return response()->json(['data' => $lead], 200);
       } else {
-        return response()->json([
-          'success' => false,
-          'data' => 'leadcriado',
-        ], 200);
+        return response()->json(['error' => 'Voucher já cadastrado com os mesmos dados', 'existe' => true], 500);
       }
     } else {
-      return response()->json([
-        'success' => false,
-        'data' => 'Data indisponivel para agendamento',
-      ], 200);
+      return response()->json(['error' => 'Data indisponivel para agendamento'], 500);
     }
   }
 

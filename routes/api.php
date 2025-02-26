@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\ContatoController;
 use App\Http\Controllers\Api\DestaqueController;
 use App\Http\Controllers\Api\PromocaoController;
+use App\Http\Controllers\Api\VouchersController;
 use App\Http\Controllers\InteresseController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -54,6 +55,12 @@ Route::prefix('promocoes')->controller(PromocaoController::class)->group(functio
   Route::get('/', 'list');
   Route::get('cidade', 'cidade');
   Route::get('{clientePath}/{promocaoPath}', 'retrieve');
+  Route::post('limite-vouchers', 'atualizaLimiteDeVouchers');
+});
+
+// Vouchers
+Route::prefix('vouchers')->controller(VouchersController::class)->group(function () {
+  Route::post('/', 'storeVoucher');
 });
 
 /**

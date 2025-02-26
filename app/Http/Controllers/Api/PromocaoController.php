@@ -30,6 +30,9 @@ class PromocaoController extends Controller {
 				$query->where("path", $request->clientePath);
 			});
 		}
+		if ($request->excluirId) {
+			$promocoes = $promocoes->whereNot("id", $request->excluirId);
+		}
 		$promocoes = $promocoes->orderBy("dataFim", "desc")
 			->orderBy("dataInicio", "desc");
 
