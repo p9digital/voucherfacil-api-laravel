@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\CidadesController;
 use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\ContatoController;
 use App\Http\Controllers\Api\DestaqueController;
+use App\Http\Controllers\Api\PesquisaController;
 use App\Http\Controllers\Api\PromocaoController;
 use App\Http\Controllers\Api\VouchersController;
 use App\Http\Controllers\InteresseController;
@@ -50,17 +51,26 @@ Route::prefix('interesse')->controller(InteresseController::class)->group(functi
   Route::post('/', 'store');
 });
 
+// Pesquisas
+Route::prefix('pesquisas')->controller(PesquisaController::class)->group(function () {
+  Route::get('/', 'list');
+  Route::get('cidade', 'cidade');
+  Route::get('{clientePath}/{promocaoPath}', 'retrieve');
+  // Route::post('limite-vouchers', 'atualizaLimiteDeVouchers');
+});
+
 // Promoções
 Route::prefix('promocoes')->controller(PromocaoController::class)->group(function () {
   Route::get('/', 'list');
   Route::get('cidade', 'cidade');
   Route::get('{clientePath}/{promocaoPath}', 'retrieve');
-  Route::post('limite-vouchers', 'atualizaLimiteDeVouchers');
+  // Route::post('limite-vouchers', 'atualizaLimiteDeVouchers');
 });
 
 // Vouchers
 Route::prefix('vouchers')->controller(VouchersController::class)->group(function () {
   Route::post('/', 'storeVoucher');
+  Route::post('pesquisa', 'storeVoucherPesquisa');
   
   // Promoções
   Route::post('verificaLimitePorEmailOuCelular', 'verificaLimitePorEmailOuCelular');
