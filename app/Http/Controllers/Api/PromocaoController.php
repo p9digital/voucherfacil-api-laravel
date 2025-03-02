@@ -71,10 +71,10 @@ class PromocaoController extends Controller {
 			->get();
 
 		foreach ($promocao->promocaounidades as $promocaoUnidade) {
-			$promoLimite = $promocao->limite;
+			$promoLimite = $promocao->limite; // Limite total geral da promoção por unidade
 			$limites = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->where("count", ">=", $promoLimite)->pluck("data_voucher")->toArray();
 			$promocaoUnidade["diasDesabilitados"] = ($limites ? $limites : array());
-			$vouchersDia = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->where("data_voucher", $hoje)->count();
+			$vouchersDia = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->count(); // REVALIDAR ESTA LÓGICA: ->where("data_voucher", $hoje)
 			$promocaoUnidade["vouchersRestantes"] = $promoLimite - $vouchersDia;
 		}
 
@@ -221,78 +221,6 @@ class PromocaoController extends Controller {
 			'promocoes' => $promocoesComItens,
 			'cliente' => $cliente
 		]);
-	}
-
-	public function promocao($clientepath, $promocaopath) {
-		date_default_timezone_set('America/Sao_Paulo');
-		$hoje = date("Y-m-d");
-
-		$cli = Cliente::where('path', $clientepath)->firstOrFail();
-		$promocao = Promocao::with("promocaounidades.unidade.cidade", "promocaounidades.periodos", 'promocaounidades.unidade.diasFechados', "promocaounidades.desabilitados", "promocaounidades.unidade.cidade", "fotos")->where(['path' => $promocaopath, "cliente_id" => $cli->id, "pesquisa" => "0", "status" => "1"])->first();
-
-		if ($promocao) {
-			/*dias que passaram do limite de agendamento por unidade*/
-			$promocaounidadeids = $promocao->promocaounidades->pluck("unidade_id")->toArray();
-
-			$leads = Lead::selectRaw("unidade_id, data_voucher, COUNT(data_voucher) AS count")->whereIn("unidade_id", $promocaounidadeids)->where("promocao_id", $promocao->id)->whereNotNull("data_voucher")->groupBy("unidade_id", "data_voucher")->get();
-
-			if ($promocao->promocaounidades) {
-				// foreach ($promocao->promocaounidades as $promocaoUnidade) {
-				// 	$limites = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->where("count", ">=", $promocao->limite)->pluck("data_voucher")->toArray();
-				// 	$promocaoUnidade["diasDesabilitados"] = $limites;
-				// 	$vouchersDia = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->where("data_voucher", $hoje)->count();
-				// 	$promocaoUnidade["vouchersRestantes"] = $promocao->limite - $vouchersDia;
-				// }
-				//----------------------------Código abaixo específico oferta dipz artur alvim-------------------------
-				$dataLimite = date("2021-03-04");
-				foreach ($promocao->promocaounidades as $promocaoUnidade) {
-					$promoLimite = $promocao->limite;
-					$limites = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->where("count", ">=", $promoLimite)->pluck("data_voucher")->toArray();
-					$promocaoUnidade["diasDesabilitados"] = ($limites ? $limites : array());
-					$vouchersDia = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->where("data_voucher", $hoje)->count();
-					$promocaoUnidade["vouchersRestantes"] = $promoLimite - $vouchersDia;
-
-					if ($promocao->id == 37 && $dataLimite == $hoje) {
-						$promoLimite = $promoLimite + 100;
-						$limites = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->where("data_voucher", "2021-03-04")->where("count", ">=", $promoLimite)->pluck("data_voucher")->toArray();
-						if (!$limites && in_array("2021-03-04", $promocaoUnidade["diasDesabilitados"])) {
-							$index = array_search("2021-03-04", $promocaoUnidade["diasDesabilitados"]);
-							if ($index >= 0) {
-								$dias = [];
-								for ($i = 0; $i < count($promocaoUnidade["diasDesabilitados"]); $i++) {
-									if ($promocaoUnidade["diasDesabilitados"][$i] != "2021-03-04") {
-										array_push($dias, $promocaoUnidade["diasDesabilitados"][$i]);
-									}
-								}
-								$promocaoUnidade["diasDesabilitados"] = $dias;
-							}
-						}
-						$vouchersDia = $leads->where("unidade_id", $promocaoUnidade->unidade_id)->where("data_voucher", $hoje)->count();
-						$promocaoUnidade["vouchersRestantes"] = $promoLimite - $vouchersDia;
-					}
-				}
-			}
-
-			$promocao['cliente'] = $cli;
-			$promocao['vouchersResgatados'] = 0;
-			if ($promocao->limite_vouchers && $promocao->limite_vouchers > 0) {
-				$leadsCount = 0;
-				foreach ($leads as $lead) {
-					$leadsCount += $lead->count;
-				}
-				$promocao['vouchersResgatados'] = $leadsCount;
-			}
-
-			return response()->json([
-				'promocao' => $promocao,
-				'success' => true
-			]);
-		} else {
-			return response()->json([
-				'promocao' => [],
-				'success' => true
-			]);
-		}
 	}
 
 	public function atualizaLimiteDeVouchers(Request $request) {

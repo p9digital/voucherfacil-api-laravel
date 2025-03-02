@@ -61,6 +61,12 @@ Route::prefix('promocoes')->controller(PromocaoController::class)->group(functio
 // Vouchers
 Route::prefix('vouchers')->controller(VouchersController::class)->group(function () {
   Route::post('/', 'storeVoucher');
+  
+  // Promoções
+  Route::post('verificaLimitePorEmailOuCelular', 'verificaLimitePorEmailOuCelular');
+
+  // Pesquisas
+  Route::post('verificaLimitePorCPFPesquisa', 'verificaLimitePorCPFPesquisa');
 });
 
 /**
