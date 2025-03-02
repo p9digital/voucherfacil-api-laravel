@@ -26,6 +26,12 @@ class PromocoesController extends Controller {
         $query->where("cliente_id", $user->cliente_id)->where("unidade_id", $user->unidade_id);
       });
     }
+    if ($request->busca) {
+      $promocoes = $promocoes->where("titulo", "LIKE", "%$request->busca%");
+    }
+    if ($request->tipo) {
+      $promocoes = $promocoes->where("pesquisa", $request->tipo);
+    }
     if ($request->cliente_id) {
       $promocoes = $promocoes->where("cliente_id", $request->cliente_id);
     }
@@ -33,15 +39,16 @@ class PromocoesController extends Controller {
     return response()->json(['data' => $promocoes->get()], 200);
   }
 
-  public function retrieve(Request $request, Promocao $promocao) {
+  public function retrieve(Request $request) {
     $user = $request->user();
+    $promocao = Promocao::with('promocaounidades.unidade', 'promocaounidades.periodos', 'fotos')->where("id", $request->promocao)->first();
     if (
       ($user->tipo === 'f')
       || ($user->tipo === 'a' && $user->cliente_id !== $promocao->cliente_id)
     )
       return response()->json(['error' => 'Unauthorized'], 401);
 
-    return response()->json(['data' => $promocao->with('promocaounidades.unidade', 'promocaounidades.periodos', 'fotos')->first()]);
+    return response()->json(['data' => $promocao]);
   }
 
   public function store(Request $request) {

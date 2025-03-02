@@ -14,7 +14,9 @@ class CommonController extends Controller {
   }
 
   public function cidades(Request $request) {
-    $cidades = Cidade::where('uf', $request->estado_id)->get();
+    $cidades = Cidade::whereHas('estado', function ($query) use ($request) {
+      $query->where('coduf', $request->estado_id);
+    })->get();
     return response()->json(['data' => $cidades], 200);
   }
 

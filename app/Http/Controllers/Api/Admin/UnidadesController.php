@@ -89,10 +89,7 @@ class UnidadesController extends Controller {
       'required' => 'O campo :attribute é obrigatório.'
     ])->validate();
 
-    $estado = Estado::where('uf', $request->estado_id)->first();
-
     $unidade->fill($request->all());
-    $unidade->estado_id = $estado->id;
     $senha = $request->input('password');
     if (empty($senha)) {
       unset($unidade->password);
