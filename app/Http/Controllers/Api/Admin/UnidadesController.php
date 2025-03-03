@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Models\Estado;
+use App\Models\Fechado;
 use App\Models\Periodo;
 use App\Models\Unidade;
 
@@ -33,8 +34,15 @@ class UnidadesController extends Controller {
     ]);
   }
 
-  public function retrieve(Request $request, Unidade $unidade) {
+  public function retrieve(Request $request) {
     $user = $request->user();
+
+    $unidade = Unidade::with('diasFechados')->find($request->unidade);
+
+    if (!$unidade) {
+      return response()->json(['error' => 'Unidade não encontrada'], 404);
+    }
+
     if (
       ($user->tipo === 'f')
       || ($user->tipo === 'a' && $user->cliente_id !== $unidade->cliente_id)
@@ -70,6 +78,7 @@ class UnidadesController extends Controller {
 
     if (!$salvo) {
       Log::error('Unidade NÃO salva', ['nome' => $unidade->nome, 'email' => $unidade->email]);
+      return response()->json(['error' => 'Erro ao salvar a unidade. Tente novamente mais tarde.'], 500);
     }
 
     return response()->json(['message' => "Unidade salva com sucesso!", 'data' => $unidade]);
@@ -98,6 +107,7 @@ class UnidadesController extends Controller {
 
     if (!$atualizado) {
       Log::error('Unidade NÃO atualizada', ['nome' => $unidade->nome, 'email' => $unidade->email]);
+      return response()->json(['error' => 'Erro ao atualizar a unidade. Tente novamente mais tarde.'], 500);
     }
 
     return response()->json(['message' => "Unidade atualizada com sucesso!", 'data' => $unidade]);
@@ -110,6 +120,7 @@ class UnidadesController extends Controller {
 
       if (!$deletado) {
         Log::error('Unidade NÃO deletada', ['nome' => $unidade->nome]);
+        return response()->json(['error' => 'Erro ao remover a unidade. Tente novamente mais tarde.'], 500);
       }
 
       return response()->json(['message' => 'Unidade removida com sucesso!'], 200);
@@ -144,9 +155,45 @@ class UnidadesController extends Controller {
     if ($user->tipo === 's') {
       if (!$periodo->delete()) {
         Log::error('Período NÃO deletado', ['nome' => $periodo->nome]);
+        return response()->json(['error' => 'Erro ao remover o período. Tente novamente mais tarde.'], 500);
       }
 
       return response()->json(['message' => 'Período removido com sucesso!'], 200);
+    }
+
+    return response()->json(['error' => 'Unauthorized'], 401);
+  }
+
+  // Dias Fechados
+  public function storeDiaFechado(Request $request, Unidade $unidade) {
+    $user = $request->user();
+
+    if ($user->tipo !== 's')
+      return response()->json(['error' => 'Unauthorized'], 401);
+
+    foreach ($request->diasFechados as $diaFechado) {
+      if (isset($diaFechado['id'])) {
+        $atualizarDiaFechado = Fechado::find($diaFechado['id']);
+        $atualizarDiaFechado->update($diaFechado);
+      } else {
+        $novoDiaFechado = new Fechado($diaFechado);
+        $novoDiaFechado->unidade_id = $unidade->id;
+        $novoDiaFechado->save();
+      }
+    }
+
+    return response()->json(['message' => "Dia fechado salvo com sucesso!", 'data' => $unidade]);
+  }
+
+  public function destroyDiaFechado(Request $request, Unidade $unidade, Fechado $fechado) {
+    $user = $request->user();
+    if ($user->tipo === 's') {
+      if (!$fechado->delete()) {
+        Log::error('Dia fechado NÃO deletado', ['nome' => $fechado->nome]);
+        return response()->json(['error' => 'Erro ao remover o dia fechado. Tente novamente mais tarde.'], 500);
+      }
+
+      return response()->json(['message' => 'Dia fechado removido com sucesso!'], 200);
     }
 
     return response()->json(['error' => 'Unauthorized'], 401);

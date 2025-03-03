@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Http\Controllers\Controller;
+use App\Models\Desabilitado;
 use App\Models\Foto;
 use App\Models\Promocao;
 use App\Models\PromocaoUnidade;
@@ -41,12 +42,16 @@ class PromocoesController extends Controller {
 
   public function retrieve(Request $request) {
     $user = $request->user();
-    $promocao = Promocao::with('promocaounidades.unidade', 'promocaounidades.periodos', 'fotos')->where("id", $request->promocao)->first();
-    if (
-      ($user->tipo === 'f')
-      || ($user->tipo === 'a' && $user->cliente_id !== $promocao->cliente_id)
-    )
+    $promocao = Promocao::with('promocaounidades.desabilitados', 'promocaounidades.unidade', 'promocaounidades.periodos', 'fotos')
+      ->find($request->promocao);
+
+    if (!$promocao) {
+      return response()->json(['error' => 'Promoção não encontrada'], 404);
+    }
+
+    if ($user->tipo === 'f' || ($user->tipo === 'a' && $user->cliente_id !== $promocao->cliente_id)) {
       return response()->json(['error' => 'Unauthorized'], 401);
+    }
 
     return response()->json(['data' => $promocao]);
   }
@@ -69,6 +74,7 @@ class PromocoesController extends Controller {
 
     if (!$promocao->save()) {
       Log::error('Promoção NÃO cadastrada', ['titulo' => $promocao->titulo]);
+      return response()->json(['error' => 'Erro ao salvar a promoção. Tente novamente mais tarde.'], 500);
     }
 
     return response()->json(['message' => "Promoção cadastrada com sucesso!", 'data' => $promocao]);
@@ -91,34 +97,11 @@ class PromocoesController extends Controller {
     $promocao->fill($request->all());
 
     if (!$promocao->save()) {
-      Log::error('Unidade NÃO atualizada', ['titulo' => $promocao->titulo]);
+      Log::error('Promoção NÃO atualizada', ['titulo' => $promocao->titulo]);
+      return response()->json(['error' => 'Erro ao atualizar a promoção. Tente novamente mais tarde.'], 500);
     }
 
     return response()->json(['message' => "Promoção atualizada com sucesso!", 'data' => $promocao]);
-  }
-
-  public function storePromocaoUnidades(Request $request, Promocao $promocao) {
-    $user = $request->user();
-
-    if ($user->tipo === 'f' || $user->tipo === 'a' && $user->cliente_id !== $promocao->cliente_id)
-      return response()->json(['error' => 'Unauthorized'], 401);
-
-    // Delete promoção unidades
-    $promocaounidadesRemovidas = $promocao->promocaounidades()->whereNotIn('unidade_id', $request->unidades)->get();
-    foreach ($promocaounidadesRemovidas as $promocaounidadeRemovida) {
-      $promocaounidadeRemovida->periodos()->delete();
-      $promocaounidadeRemovida->delete();
-    }
-
-    // Vincula promoção unidades
-    foreach ($request->unidades as $unidade) {
-      $atualizarPromocaoUnidade =  PromocaoUnidade::where(['promocao_id' => $promocao->id, 'unidade_id' => $unidade])->first();
-      if (!$atualizarPromocaoUnidade) {
-        PromocaoUnidade::create(['promocao_id' => $promocao->id, 'unidade_id' => $unidade]);
-      }
-    }
-
-    return response()->json(['message' => "Promoção cadastradas salva com sucesso!", 'data' => $promocao]);
   }
 
   public function storeFotos(Request $request, Promocao $promocao) {
@@ -178,6 +161,7 @@ class PromocoesController extends Controller {
       }
     } catch (Throwable $e) {
       Log::error('Erro ao fazer upload das fotos', [$e->getMessage()]);
+      return response()->json(['error' => 'Erro ao salvar as fotos. Tente novamente mais tarde.'], 500);
     }
 
     $path = storage_path("app/public/" . $promocao->cliente->path . "/" . $promocao->path);
@@ -186,6 +170,61 @@ class PromocoesController extends Controller {
     return response()->json(['message' => "Fotos cadastradas com sucesso!", 'data' => $promocao]);
   }
 
+  // Promoção Unidades
+  public function storePromocaoUnidades(Request $request, Promocao $promocao) {
+    $user = $request->user();
+
+    if ($user->tipo === 'f' || $user->tipo === 'a' && $user->cliente_id !== $promocao->cliente_id)
+      return response()->json(['error' => 'Unauthorized'], 401);
+
+    // Delete promoção unidades
+    $promocaounidadesRemovidas = $promocao->promocaounidades()->whereNotIn('unidade_id', $request->unidades)->get();
+    foreach ($promocaounidadesRemovidas as $promocaounidadeRemovida) {
+      $promocaounidadeRemovida->desabilitados()->delete();
+      $promocaounidadeRemovida->periodos()->delete();
+      $promocaounidadeRemovida->delete();
+    }
+
+    // Vincula promoção unidades
+    foreach ($request->unidades as $unidade) {
+      $atualizarPromocaoUnidade =  PromocaoUnidade::where(['promocao_id' => $promocao->id, 'unidade_id' => $unidade])->first();
+      if (!$atualizarPromocaoUnidade) {
+        PromocaoUnidade::create(['promocao_id' => $promocao->id, 'unidade_id' => $unidade]);
+      }
+    }
+
+    return response()->json(['message' => "Unidades da promoção salvas com sucesso!", 'data' => $promocao]);
+  }
+
+  public function habilitaDias(Request $request, Promocao $promocao) {
+    $user = $request->user();
+
+    if ($user->tipo === 'f' || $user->tipo === 'a' && $user->cliente_id !== $promocao->cliente_id)
+      return response()->json(['error' => 'Unauthorized'], 401);
+
+    try {
+      $desabilitado = Desabilitado::where(['promocaounidade_id' => $request->promocaounidade_id, 'dia' => $request->dia])->first();
+      $desabilitado->delete();
+    } catch(Throwable $e) {
+      Log::error($e->getMessage());
+      return response()->json(['error' => 'Erro ao habilitar dia'], 500);
+    }
+
+    return response()->json(['message' => "Dia habilitado com sucesso!", 'data' => $promocao]);
+  }
+
+  public function desabilitaDias(Request $request, Promocao $promocao) {
+    $user = $request->user();
+
+    if ($user->tipo === 'f' || $user->tipo === 'a' && $user->cliente_id !== $promocao->cliente_id)
+      return response()->json(['error' => 'Unauthorized'], 401);
+
+    Desabilitado::create(['promocaounidade_id' => $request->promocaounidade_id, 'dia' => $request->dia]);
+
+    return response()->json(['message' => "Dia desabilitado com sucesso!", 'data' => $promocao]);
+  }
+
+  // Common actions
   private function resizeCrop($image, $promocaoUrl, $nameFile, $width, $height) {
     $manager = new ImageManager(Driver::class);
     $img = $manager->read($image);

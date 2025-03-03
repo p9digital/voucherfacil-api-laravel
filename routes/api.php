@@ -71,7 +71,7 @@ Route::prefix('promocoes')->controller(PromocaoController::class)->group(functio
 Route::prefix('vouchers')->controller(VouchersController::class)->group(function () {
   Route::post('/', 'storeVoucher');
   Route::post('pesquisa', 'storeVoucherPesquisa');
-  
+
   // Promoções
   Route::post('verificaLimitePorEmailOuCelular', 'verificaLimitePorEmailOuCelular');
 
@@ -131,8 +131,11 @@ Route::prefix('admin')->group(function () {
       Route::get('{promocao}', 'retrieve');
       Route::patch('{promocao}', 'update');
       Route::delete('{promocao}', 'destroy');
-      Route::post('{promocao}/unidades', 'storePromocaoUnidades');
       Route::post('{promocao}/fotos', 'storeFotos');
+      // Promoções unidades
+      Route::post('{promocao}/promocao-unidade', 'storePromocaoUnidades');
+      Route::post('{promocao}/promocao-unidade/desabilita-dias', 'desabilitaDias');
+      Route::delete('{promocao}/promocao-unidade/habilita-dias', 'habilitaDias');
     });
 
     // Unidades
@@ -145,6 +148,9 @@ Route::prefix('admin')->group(function () {
       // Períodos da unidade
       Route::post('{unidade}/periodos', 'storePeriodos');
       Route::delete('{unidade}/periodos/{periodo}', 'destroyPeriodo');
+      // Dias fechados da unidade
+      Route::post('{unidade}/dias-fechados', 'storeDiaFechado');
+      Route::delete('{unidade}/dias-fechados/{fechado}', 'destroyDiaFechado');
     });
 
     // Usuários
