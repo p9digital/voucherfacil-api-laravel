@@ -481,7 +481,7 @@ CREATE TABLE `promocoes` (
   `codigosConversao` text,
   `mostrar` enum('0','1') NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updatet_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
   `dias_range` int DEFAULT NULL,
   `valor_de` bigint DEFAULT NULL,

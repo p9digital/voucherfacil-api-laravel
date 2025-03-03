@@ -108,10 +108,8 @@ Route::prefix('admin')->group(function () {
     Route::prefix('dashboard')->controller(AdminDashboardController::class)->group(function () {
       Route::get('hoje', 'hoje');
       Route::get('ontem', 'ontem');
-      Route::get('mesAtual', 'mesAtual');
-      Route::get('mesAnterior', 'mesAnterior');
       Route::get('geral', 'geral');
-      Route::get('grafico', 'grafico');
+      Route::get('charts', 'charts');
       Route::get('ultimos30dias', 'ultimos30Dias');
     });
 

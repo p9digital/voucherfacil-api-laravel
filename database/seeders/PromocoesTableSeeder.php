@@ -82,7 +82,7 @@ var google_remarketing_only = false;
 </noscript>',
                 'mostrar' => '0',
                 'created_at' => '2018-03-08 14:18:45',
-                'updatet_at' => NULL,
+                'updated_at' => NULL,
                 'status' => '1',
             ),
             1 =>
@@ -151,7 +151,7 @@ var google_remarketing_only = false;
 </noscript>',
                 'mostrar' => '1',
                 'created_at' => '2018-05-28 11:41:09',
-                'updatet_at' => NULL,
+                'updated_at' => NULL,
                 'status' => '1',
             ),
             2 =>
@@ -181,7 +181,7 @@ var google_remarketing_only = false;
                 'codigosConversao' => NULL,
                 'mostrar' => '0',
                 'created_at' => '2018-06-05 09:46:03',
-                'updatet_at' => NULL,
+                'updated_at' => NULL,
                 'status' => '0',
             ),
             3 =>
@@ -211,7 +211,7 @@ var google_remarketing_only = false;
                 'codigosConversao' => NULL,
                 'mostrar' => '0',
                 'created_at' => '2018-06-05 09:46:03',
-                'updatet_at' => NULL,
+                'updated_at' => NULL,
                 'status' => '0',
             ),
         ));
