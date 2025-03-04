@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Log;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller {
   public function login(Request $request) {
@@ -23,6 +23,8 @@ class AuthController extends Controller {
       $user->save();
     }
 
+    Log::create(["user_id" => $user->id, "log" => "Usuário '$user->name' fez login"]);
+
     return response()->json([
       'data' => array(
         'marca' => isset($user->cliente) ? $user->cliente->razaoSocial : "Admin",
@@ -30,7 +32,7 @@ class AuthController extends Controller {
         'token' => $user->token,
         'codigo' => isset($user->cliente->promocoes[0]) ? $user->cliente->promocoes[0]->codigo : ""
       )
-    ], 200);
+    ]);
   }
 
   public function logout(Request $request) {
@@ -38,7 +40,7 @@ class AuthController extends Controller {
     $user->token = null;
     $user->save();
 
-    return response()->json(['message' => 'Logout'], 200);
+    return response()->json(['message' => 'Logout']);
   }
 
   public function me(Request $request) {
@@ -51,11 +53,11 @@ class AuthController extends Controller {
       'email' => $user->email,
       'tipo' => $user->tipo,
       'status' => $user->status
-    ], 200);
+    ]);
   }
 
   public function permissions(Request $request) {
     $user = $request->user();
-    return response()->json([$user->tipo], 200);
+    return response()->json([$user->tipo]);
   }
 }

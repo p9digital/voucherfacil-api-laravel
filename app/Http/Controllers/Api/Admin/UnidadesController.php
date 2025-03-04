@@ -123,7 +123,7 @@ class UnidadesController extends Controller {
         return response()->json(['error' => 'Erro ao remover a unidade. Tente novamente mais tarde.'], 500);
       }
 
-      return response()->json(['message' => 'Unidade removida com sucesso!'], 200);
+      return response()->json(['message' => 'Unidade removida com sucesso!']);
     }
 
     return response()->json(['error' => 'Unauthorized'], 401);
@@ -158,7 +158,7 @@ class UnidadesController extends Controller {
         return response()->json(['error' => 'Erro ao remover o período. Tente novamente mais tarde.'], 500);
       }
 
-      return response()->json(['message' => 'Período removido com sucesso!'], 200);
+      return response()->json(['message' => 'Período removido com sucesso!']);
     }
 
     return response()->json(['error' => 'Unauthorized'], 401);
@@ -193,7 +193,7 @@ class UnidadesController extends Controller {
         return response()->json(['error' => 'Erro ao remover o dia fechado. Tente novamente mais tarde.'], 500);
       }
 
-      return response()->json(['message' => 'Dia fechado removido com sucesso!'], 200);
+      return response()->json(['message' => 'Dia fechado removido com sucesso!']);
     }
 
     return response()->json(['error' => 'Unauthorized'], 401);

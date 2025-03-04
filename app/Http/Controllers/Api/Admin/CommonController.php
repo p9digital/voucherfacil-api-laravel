@@ -10,14 +10,14 @@ use App\Models\Estado;
 class CommonController extends Controller {
   public function estados() {
     $estados = Estado::get();
-    return response()->json(['data' => $estados], 200);
+    return response()->json(['data' => $estados]);
   }
 
   public function cidades(Request $request) {
     $cidades = Cidade::whereHas('estado', function ($query) use ($request) {
       $query->where('coduf', $request->estado_id);
     })->get();
-    return response()->json(['data' => $cidades], 200);
+    return response()->json(['data' => $cidades]);
   }
 
   public function cidadesPromocoes() {
@@ -35,6 +35,6 @@ class CommonController extends Controller {
       }
     }
 
-    return response()->json(['data' => $cidadesFiltradas], 200);
+    return response()->json(['data' => $cidadesFiltradas]);
   }
 }

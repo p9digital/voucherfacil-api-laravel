@@ -16,17 +16,17 @@ class CidadesController extends Controller {
     }
     if ($request->com_promocoes) {
       $unidades = $this->cidadesComPromocoes();
-      $cidades = $cidades->whereIn('id', $unidades->pluck('cidade_id')->toArray());
+      $cidades = $cidades->whereIn('codcidade', $unidades->pluck('cidade_id')->toArray());
     }
 
-    return response()->json(['data' => $cidades->get()], 200);
+    return response()->json(['data' => $cidades->get()]);
   }
 
   public function retrieve(Request $request) {
     $cidade = Cidade::where('path', $request->cidadePath)
       // ->where('uf', $request->uf)
       ->firstOrFail();
-    return response()->json(['data' => $cidade], 200);
+    return response()->json(['data' => $cidade]);
   }
 
   private function cidadesComPromocoes() {

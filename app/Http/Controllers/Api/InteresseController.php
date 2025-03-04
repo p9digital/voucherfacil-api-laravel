@@ -5,26 +5,27 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\Interesse as MailInteresse;
 use App\Models\Interesse;
 use App\Models\Promocao;
 
 class InteresseController extends Controller {
   public function store(Request $request) {
     $interesse = new Interesse($request->all());
-    $promocao = Promocao::where("id", "=", $interesse->promocao_id)->first();
+    $promocao = Promocao::find($interesse->promocao_id);
 
     if (!$interesse->save()) {
-      return response()->json(['data' => 'erro'], 500);
+      return response()->json(['error' => 'Erro ao salvar interesse'], 500);
     }
 
     if (config('app.env') === "production") {
       Mail::to(["notificacaoleads@p9.digital"])
-        ->queue(new \App\Mail\Interesse($interesse, $promocao));
+        ->send(new MailInteresse($interesse, $promocao));
     } else {
       Mail::to(["dev@p9.digital"])
-        ->queue(new \App\Mail\Interesse($interesse, $promocao));
+        ->send(new MailInteresse($interesse, $promocao));
     }
 
-    return response()->json(['data' => $interesse], 200);
+    return response()->json(['data' => $interesse]);
   }
 }

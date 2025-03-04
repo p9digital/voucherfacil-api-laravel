@@ -26,13 +26,13 @@ class ContatoController extends Controller {
       if (config('app.env') === "production") {
         Mail::to(['comercial@voucherfacil.com.br'])
           ->bcc('notificacoesleads@publi9.com.br')
-          ->queue(new \App\Mail\Contato($contato));
+          ->send(new \App\Mail\Contato($contato));
       } else {
         Mail::to(['dev@p9.digital'])
-          ->queue(new \App\Mail\Contato($contato));
+          ->send(new \App\Mail\Contato($contato));
       }
 
-      return response()->json(['data' => $contato], 200);
+      return response()->json(['data' => $contato]);
     } else {
       return response()->json(['error' => 'Erro ao salvar o contato'], 500);
     }
@@ -45,13 +45,13 @@ class ContatoController extends Controller {
       if (config('app.env') === "production") {
         Mail::to(['comercial@voucherfacil.com.br'])
           ->bcc('notificacoesleads@publi9.com.br')
-          ->queue(new \App\Mail\Divulgue($divulgue));
+          ->send(new \App\Mail\Divulgue($divulgue));
       } else {
         Mail::to(['dev@p9.digital'])
-          ->queue(new \App\Mail\Divulgue($divulgue));
+          ->send(new \App\Mail\Divulgue($divulgue));
       }
 
-      return response()->json(['data' => $divulgue], 200);
+      return response()->json(['data' => $divulgue]);
     } else {
       return response()->json(['error' => 'Erro ao salvar o contato da empresa'], 500);
     }

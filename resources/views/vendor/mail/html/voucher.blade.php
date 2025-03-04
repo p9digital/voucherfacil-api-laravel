@@ -8,7 +8,7 @@
         <span class="texto-voucher">{{$voucher->voucher}}</span>
     </div>
 
-    <div style="text-align:center;">{!! QrCode::size(200)->generate($voucher->voucher) !!}</div>
+    <div style="text-align:center;"><img src="https://app.voucherfacil.com.br/storage/{{$voucher->voucher}}.png" /></div>
 
     <br />
     <p>Apresente o número do voucher ou mostre essa tela no celular</p>
@@ -55,9 +55,9 @@
         <span>Compartilhe com seus amigos</span>
 
         <div>
-            <a id="shareBtn" title="Facebook" href="https://www.facebook.com/sharer/sharer.php?u={{env('FRONT_URL') . '/oferta' . '/'. $promocao->cliente->path . '/' . $promocao->path}}" target="_blank"><img src="{{url('imgs/main/icone-facebook.jpg')}}" alt="Facebook" /></a>
+            <a id="shareBtn" title="Facebook" href="https://www.facebook.com/sharer/sharer.php?u={{env('SITE_URL') . '/oferta' . '/'. $promocao->cliente->path . '/' . $promocao->path}}" target="_blank"><img src="{{url('imgs/main/icone-facebook.jpg')}}" alt="Facebook" /></a>
             {{-- <a class="twitter-share-button" href="https://twitter.com/share" data-url="{{url($promocao->cliente->path . '/' . $promocao->path)}}" target="_blank"><img src="{{url('imgs/main/icone-twitter.jpg')}}" alt="Twitter" /></a> --}}
-            <a title="Whatsapp" href="https://api.whatsapp.com/send?text={{env('FRONT_URL') . '/oferta' . '/'. $promocao->cliente->path . '/' . $promocao->path}}" target="_blank"><img src="{{url('imgs/main/icone-whatsapp.jpg')}}" alt="Whatsapp" /></a>
+            <a title="Whatsapp" href="https://api.whatsapp.com/send?text={{env('SITE_URL') . '/oferta' . '/'. $promocao->cliente->path . '/' . $promocao->path}}" target="_blank"><img src="{{url('imgs/main/icone-whatsapp.jpg')}}" alt="Whatsapp" /></a>
         </div>
 
     </div>

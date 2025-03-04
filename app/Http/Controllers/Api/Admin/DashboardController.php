@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
-use App\Models\Promocao;
 use App\Models\Unidade;
 
 class DashboardController extends Controller {
@@ -28,7 +27,7 @@ class DashboardController extends Controller {
 				'agendados' => $leads->count(),
 				'validados' => $leads->where("validado", "1")->count(),
 			)
-		], 200);
+		]);
 	}
 
 	public function ontem(Request $request) {
@@ -50,7 +49,7 @@ class DashboardController extends Controller {
 				'agendados' => $leads->count(),
 				'validados' => $leads->where("validado", "1")->count(),
 			)
-		], 200);
+		]);
 	}
 
 	public function ultimos30Dias(Request $request) {
@@ -75,7 +74,7 @@ class DashboardController extends Controller {
 				'agendados' => $leads->count(),
 				'validados' => $leads->where("validado", "1")->count(),
 			)
-		], 200);
+		]);
 	}
 
 	public function geral(Request $request) {

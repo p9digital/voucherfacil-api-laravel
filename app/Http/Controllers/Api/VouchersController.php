@@ -6,13 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
-use Jenssegers\Agent\Agent;
 use App\Models\Lead;
-use App\Models\Promocao;
-use App\Models\User;
 use App\Models\Pesquisa;
 use App\Mail\Agendamento;
 use App\Mail\Pesquisa as AgendamentoPesquisa;
+use LaravelQRCode\Facades\QRCode;
 
 class VouchersController extends Controller {
   // Promoções Actions
@@ -58,7 +56,7 @@ class VouchersController extends Controller {
       $this->sendMailLeadAgendamento($lead, $promocao, $unidade, $date, $per->nome);
       $this->sendMailVoucher($lead, $promocao, $unidade, $date, $per->nome);
 
-      return response()->json(['data' => $lead], 200);
+      return response()->json(['data' => $lead]);
     } else {
       return response()->json(['error' => 'Data indisponível para agendamento'], 500);
     }
@@ -67,7 +65,7 @@ class VouchersController extends Controller {
   public function verificaLimitePorEmailOuCelular(Request $request) {
     $leads = Lead::where("promocao_id", $request->promocao_id)->where($request->campo, $request->valor)->get();
 
-    return response()->json(['data' => $leads->count()], 200);
+    return response()->json(['data' => $leads->count()]);
   }
 
   private function validacoesPromocao($request, $promocao) {
@@ -144,11 +142,11 @@ class VouchersController extends Controller {
 
       $this->sendMailLeadAgendamentoPesquisa($lead, $promocao, $unidade, $date, $per->nome);
       Mail::to([$lead->email])
-        ->queue(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $date, $per->nome));
+        ->send(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $date, $per->nome));
 
-      return response()->json(['data' => $lead], 200);
+      return response()->json(['data' => $lead]);
     } else {
-      return response()->json(['error' => 'Data indisponível para agendamento'], 200);
+      return response()->json(['error' => 'Data indisponível para agendamento']);
     }
   }
 
@@ -161,7 +159,7 @@ class VouchersController extends Controller {
       ->where("data_voucher", "<", $hojeFim)
       ->get();
 
-    return response()->json(['data' => $leads->count()], 200);
+    return response()->json(['data' => $leads->count()]);
   }
 
   private function validacoesPesquisa($request, $promocao) {
@@ -180,7 +178,7 @@ class VouchersController extends Controller {
   // Funcões de disparo de e-mail
   private function sendMailLeadAgendamento($lead, $promocao, $unidade, $dia, $periodo) {
     // $hoje = date("Y-m-d H:i:s");
-    // $horaCron = date("Y-m-d 09:00:00");
+    // $horaCron = date("Y-m-d 08:00:00");
     // $dataHoje = date("Y-m-d");
     // $dataVoucher = $lead->data_voucher;
 
@@ -191,10 +189,10 @@ class VouchersController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(['notificacaoleads@p9.digital'])
-        ->queue(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
+        ->send(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
     } else {
       Mail::to(['teste@p9.digital'])
-        ->queue(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
+        ->send(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
     }
 
     //dispara sms para o usuario
@@ -211,160 +209,77 @@ class VouchersController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(['notificacaoleads@p9.digital'])
-        ->queue(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
+        ->send(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
     } else {
       Mail::to(['teste@p9.digital'])
-        ->queue(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
+        ->send(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
     }
   }
 
   private function sendMailVoucher($lead, $promocao, $unidade, $dia, $periodo) {
     //disparar email para o franqueado/franqueadora
+    $path = storage_path("app/public/" . $lead->voucher . ".png");
+    QRCode::url("https://admin.voucherfacil.com.br/validar/$lead->voucher")->setSize(200)->setOutfile($path)->png();
+
     Mail::to([$lead->email])
-      ->queue(new \App\Mail\Voucher($lead, $promocao, $unidade, $dia, $periodo));
+      ->send(new \App\Mail\Voucher($lead, $promocao, $unidade, $dia, $periodo));
   }
 
-  // OLD API Rotas de dados
-  public function leads(Request $request) {
-    $user = User::where('token', $request->token)->first();
-    if (isset($request->token) && !empty($request->token) && $user) {
-      $leads = Lead::whereNotNull("data_voucher");
-      //$leads = Lead::whereNotNull("data_voucher")->where("nome", "NOT LIKE", "%test%")->where("email", "NOT LIKE", "%test%");
-      if (!empty($user->cliente_id) && $user->tipo == "a") { //franqueadora
-        $promocoes = Promocao::where("cliente_id", $user->cliente_id);
-        $promocoesArray = $promocoes->select("id")->pluck("id")->toArray();
-        $leads = $leads->whereIn("promocao_id", $promocoesArray);
-      } else if (!empty($user->cliente_id) && $user->tipo == "f") { // franqueado
-        $promocoes = Promocao::where("cliente_id", $user->cliente_id);
-        $promocoesArray = $promocoes->select("id")->pluck("id")->toArray();
-        $leads = $leads->whereIn("promocao_id", $promocoesArray)->where("unidade_id", $user->unidade_id);
-      }
+  // OLD Actions
+  // public function reagendamento($cliente, $promocao, $hash) {
+  //   $lead = Lead::where('hash', $hash)->first();
+  //   if (empty($lead->voucher)) {
+  //     $cli = Cliente::where('path', $cliente)->firstOrFail();
+  //     $promo = Promocao::where('path', $promocao)->where("cliente_id", $cli->id)->firstOrFail();
+  //     $diasDesabilitados = DB::select("SELECT DISTINCT(data_voucher) AS dv, (SELECT COUNT(*) FROM leads l WHERE l.unidade_id = $lead->unidade_id AND l.promocao_id = $lead->promocao_id AND l.data_voucher = dv) AS count FROM leads WHERE unidade_id = $lead->unidade_id AND promocao_id = $lead->promocao_id");
 
-      return response()->json([
-        'success' => true,
-        'data' => array(
-          'leads' => $leads->get()
-        )
-      ], 200);
-    }
+  //     return view('agendamento.reagendamento', ['lead' => $lead, 'nome' => $lead->nome, 'cliente' => $cli, 'promocao' => $promo, 'diasDesabilitados' => $diasDesabilitados]);
+  //   } else {
+  //     return redirect($cliente . "/" . $promocao)->withErrors(["nome" => "Agendamento já realizado."]);
+  //   }
+  // }
 
-    return response()->json(['success' => false, 'error' => 'token inválido'], 500);
-  }
+  // public function calendario($cliente, $promocao, $idlead) {
+  //   header("Content-Type: text/calendar; charset=utf-8");
+  //   header("Content-Disposition: attachment; filename=calendario.ics");
+  //   $lead = Lead::find($idlead);
+  //   $cli = Cliente::where('path', $cliente)->firstOrFail();
+  //   $promo = Promocao::where('path', $promocao)->where("cliente_id", $cli->id)->firstOrFail();
+  //   $periodo = str_replace(":", "", $lead->periodo->nome);
 
-  public function vouchers(Request $request) {
-    $user = User::where('token', $request->token)->first();
-    if (isset($request->token) && !empty($request->token) && $user) {
-      $leads = $user->unidade->leads->where("data_voucher", date("Y-m-d"));
-      //$leads = $user->unidade->leads->where("data_voucher", date("Y-m-d"))->where("nome", "NOT LIKE", "%test%")->where("email", "NOT LIKE", "%test%");
-      $validados = $leads->where("validado", "1")->count();
-      $naoValidados = $leads->where("validado", "0")->count();
+  //   $name = "Promoção " . $promo->titulo;
+  //   $data = str_replace("-", "", $lead->data_voucher);
+  //   $location = $lead->unidade->endereco . ", " . $lead->unidade->numero . ", " . $lead->unidade->bairro . (!empty($lead->unidade->complemento) ? ", " . $lead->unidade->complemento : "") . ", " . $lead->unidade->cidade->nome . "-" . $lead->unidade->estado->uf;
+  //   $start = $data . "T{$periodo}00Z";
+  //   $end = $data . "T{$periodo}00Z";
+  //   $description = "descrição";
+  //   $slug = strtolower(str_replace(array(' ', "'", '.'), array('_', '', ''), $name));
+  //   $texto = "";
+  //   echo "BEGIN:VCALENDAR\n";
+  //   echo "VERSION:2.0\n";
+  //   echo "PRODID:-//VoucherFacil.com.br//NONSGML " . "//EN\n";
+  //   echo "METHOD:REQUEST\n";
+  //   echo "BEGIN:VEVENT\n";
+  //   echo "UID:" . $data . "T{$periodo}00-" . rand() . "-voucherfacil.com.br\n"; //Required by Outlook
+  //   echo "DTSTAMP:" . $data . "T{$periodo}00\n";
+  //   echo "DTSTART;TZID=America/Sao_Paulo:" . $start . "\n";
+  //   echo "DTEND;TZID=America/Sao_Paulo:" . $end . "\n";
+  //   echo "LOCATION:" . $location . "\n";
+  //   echo "SUMMARY:" . $name . "\n";
+  //   echo "DESCRIPTION:" . $description . "\n";
+  //   echo "END:VEVENT\n";
+  //   echo "END:VCALENDAR";
+  //   return;
+  // }
 
-      return response()->json([
-        'success' => true,
-        'data' => array(
-          'total' => $leads->count(),
-          'validados' => $validados,
-          'naovalidados' => $naoValidados
-        )
-      ], 200);
-    }
+  // public function pdf($cliente, $promocao, $voucher) {
+  //   $lead = Lead::where('voucher', $voucher)->first();
+  //   if ($lead) {
+  //     $data = date("d/m/Y", strtotime($lead->data_voucher));
 
-    return response()->json(['success' => false, 'error' => 'token inválido'], 500);
-  }
-
-  public function vouchersDetalhes(Request $request) {
-    $user = User::where('token', $request->token)->first();
-    if (isset($request->token) && !empty($request->token) && $user) {
-      $hoje = date("Y-m-d H:i:s");
-
-      $leads = $user->unidade->leads->where("data_voucher", ">=", $request->dataDe)->where("data_voucher", "<=", $request->dataAte);
-
-      $promocoes = $user->unidade->promocoes->where('dataInicio', '<=', $hoje)
-        ->where("dataFim", '>', $hoje)
-        ->where("mostrar", "1")
-        ->where("status", "1");
-
-      $leadsFormatados = [];
-
-      foreach ($leads as $key => $item) {
-        $lead = [
-          "id" => $item->id,
-          "unidade_id" => $item->unidade_id,
-          "promocao_id" => $item->promocao_id,
-          "nome" => $item->nome,
-          "email" => $item->email,
-          "telefone" => $item->telefone,
-          "voucher" => $item->voucher,
-          "data_voucher" => $item->data_voucher,
-          "horario_voucher" => $item->horario_voucher,
-          "validado" => $item->validado,
-        ];
-
-        array_push($leadsFormatados, $lead);
-      }
-
-
-      return response()->json([
-        'success' => true,
-        'data' => array(
-          'leads' => $leadsFormatados,
-          'promocoes' => $promocoes,
-        )
-      ], 200);
-    }
-
-    return response()->json(['success' => false, 'error' => 'token inválido'], 500);
-  }
-
-  public function validar(Request $request) {
-    $user = User::where('token', $request->token)->first();
-    if (isset($request->token) && !empty($request->token) && isset($request->voucher) && !empty($request->voucher) && $user) {
-      $lead = Lead::where("voucher", $request->voucher)->first();
-      if ($lead->unidade->cliente_id == $user->cliente_id) {
-        if ($lead->validado == "0") {
-          $lead->validado = "1";
-          if (isset($request->ferramenta_validacao) && !empty($request->ferramenta_validacao) && is_string($request->ferramenta_validacao)) {
-            $lead->ferramenta_validacao = $request->ferramenta_validacao;
-          }
-          if ($lead->save()) {
-            $leads = $user->unidade->leads->where("data_voucher", date("Y-m-d"));
-            //$leads = $user->unidade->leads->where("data_voucher", date("Y-m-d"))->where("nome", "NOT LIKE", "%test%")->where("email", "NOT LIKE", "%test%");
-            $validados = $leads->where("validado", "1")->count();
-            $naoValidados = $leads->where("validado", "0")->count();
-
-            return response()->json([
-              'success' => true,
-              'data' => array(
-                "mensagem" => "voucher validado com sucesso",
-                'total' => $leads->count(),
-                'validados' => $validados,
-                'naovalidados' => $naoValidados
-              )
-            ], 200);
-          } else {
-            return response()->json(['success' => false, 'error' => 'erro ao validar voucher'], 500);
-          }
-        } else {
-          $leads = $user->unidade->leads->where("data_voucher", date("Y-m-d"));
-          //$leads = $user->unidade->leads->where("data_voucher", date("Y-m-d"))->where("nome", "NOT LIKE", "%test%")->where("email", "NOT LIKE", "%test%");
-          $validados = $leads->where("validado", "1")->count();
-          $naoValidados = $leads->where("validado", "0")->count();
-
-          return response()->json([
-            'success' => false,
-            'error' => 'voucher já validado',
-            'data' => array(
-              'total' => $leads->count(),
-              'validados' => $validados,
-              'naovalidados' => $naoValidados
-            )
-          ], 500);
-        }
-      } else {
-        return response()->json(['success' => false, 'error' => 'voucher inválido'], 500);
-      }
-    }
-
-    return response()->json(['success' => false, 'error' => 'token inválido'], 500);
-  }
+  //     return \PDF::loadView('voucher.voucher', ['lead' => $lead, 'cliente' => $lead->promocao->cliente, 'promocao' => $lead->promocao, 'data' => $data, 'unidade' => $lead->unidade])->download('pdfvoucher.pdf');
+  //   } else {
+  //     return redirect(url());
+  //   }
+  // }
 }

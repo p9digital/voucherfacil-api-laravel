@@ -14,7 +14,6 @@
 | Email:      | {{$agendamento->email}} |
 | Pessoas:      | {{$agendamento->pessoas}} |
 | Origem:      | {{$agendamento->origem}} |
-| Dispositivo:      | {{$agendamento->device . " / IP: " . $agendamento->ip}} |
 | Gerado em:      | {{date("d/m/Y H:i")}} |
 </x-mail::table>
 

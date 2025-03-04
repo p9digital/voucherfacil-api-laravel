@@ -150,7 +150,7 @@ return [
         * The disk names on which the backups will be stored.
         */
       'disks' => [
-        'spaces_backup',
+        // 'spaces_backup', // VALIDAR spaces_backup
         'local',
       ],
     ],
@@ -246,7 +246,8 @@ return [
   'monitor_backups' => [
     [
       'name' => env('APP_NAME', 'VoucherFacilAPI'),
-      'disks' => ['spaces_backup', 'local'],
+      // 'disks' => ['spaces_backup', 'local'], // VALIDAR spaces_backup
+      'disks' => ['local'],
       'health_checks' => [
         \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumAgeInDays::class => 1,
         \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumStorageInMegabytes::class => 5000,

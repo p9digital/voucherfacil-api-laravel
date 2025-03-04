@@ -12,13 +12,13 @@ use App\Http\Controllers\Api\Admin\UnidadesController as AdminUnidadesController
 use App\Http\Controllers\Api\Admin\UsuariosController as AdminUsuariosController;
 use App\Http\Controllers\Api\Admin\VouchersController as AdminVouchersController;
 use App\Http\Controllers\Api\CidadesController;
-use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\ContatoController;
 use App\Http\Controllers\Api\DestaqueController;
+use App\Http\Controllers\Api\GeneralController;
+use App\Http\Controllers\Api\InteresseController;
 use App\Http\Controllers\Api\PesquisaController;
 use App\Http\Controllers\Api\PromocaoController;
 use App\Http\Controllers\Api\VouchersController;
-use App\Http\Controllers\InteresseController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return $request->user();
@@ -28,11 +28,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('cidades')->controller(CidadesController::class)->group(function () {
   Route::get('/', 'list');
   Route::get('retrieve', 'retrieve');
-});
-
-// Clientes
-Route::prefix('clientes')->controller(ClienteController::class)->group(function () {
-  Route::get('{clientePath}', 'retrieve');
 });
 
 // Contatos
@@ -46,6 +41,11 @@ Route::prefix('destaques')->controller(DestaqueController::class)->group(functio
   Route::get('/', 'list');
 });
 
+// General
+Route::prefix('general')->controller(GeneralController::class)->group(function () {
+  Route::get('encurtado/{codigo}', 'encurtado');
+});
+
 // Interesse
 Route::prefix('interesse')->controller(InteresseController::class)->group(function () {
   Route::post('/', 'store');
@@ -53,10 +53,7 @@ Route::prefix('interesse')->controller(InteresseController::class)->group(functi
 
 // Pesquisas
 Route::prefix('pesquisas')->controller(PesquisaController::class)->group(function () {
-  Route::get('/', 'list');
-  Route::get('cidade', 'cidade');
   Route::get('{clientePath}/{promocaoPath}', 'retrieve');
-  // Route::post('limite-vouchers', 'atualizaLimiteDeVouchers');
 });
 
 // Promoções
@@ -64,7 +61,7 @@ Route::prefix('promocoes')->controller(PromocaoController::class)->group(functio
   Route::get('/', 'list');
   Route::get('cidade', 'cidade');
   Route::get('{clientePath}/{promocaoPath}', 'retrieve');
-  // Route::post('limite-vouchers', 'atualizaLimiteDeVouchers');
+  // Route::post('limite-vouchers', 'quantidadeVouchersDisponiveis');
 });
 
 // Vouchers

@@ -37,7 +37,7 @@ class PromocoesController extends Controller {
       $promocoes = $promocoes->where("cliente_id", $request->cliente_id);
     }
 
-    return response()->json(['data' => $promocoes->get()], 200);
+    return response()->json(['data' => $promocoes->get()]);
   }
 
   public function retrieve(Request $request) {

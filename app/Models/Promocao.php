@@ -105,7 +105,7 @@ class Promocao extends Model {
 			->get();
 
 		$cidadesIndiretasIds = collect([]);
-		//por algum motivo ->toArray nao funciona nesse capeta, fazendo old school
+		//por algum motivo ->toArray nao funciona, fazendo manualmente
 		foreach ($cidadesIndiretas as $cidade) {
 			if (!$cidadesIndiretasIds->has($cidade->id)) {
 				$cidadesIndiretasIds->push($cidade->id);

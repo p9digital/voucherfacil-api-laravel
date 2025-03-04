@@ -113,7 +113,7 @@ class UsuariosController extends Controller {
         Log::error('Usuário NÃO deletado', ['nome' => $usuario->nome]);
       }
 
-      return response()->json(['message' => 'Usuário removido com sucesso!'], 200);
+      return response()->json(['message' => 'Usuário removido com sucesso!']);
     } catch (Throwable $e) {
       Log::error('Erro ao deletar usuário', [$e->getMessage()]);
     }

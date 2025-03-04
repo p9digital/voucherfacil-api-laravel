@@ -62,7 +62,7 @@ class VouchersController extends Controller {
         //   $lead->ferramenta_validacao = $request->ferramenta_validacao;
         // }
         if ($lead->save()) {
-          return response()->json(["mensagem" => "Voucher validado com sucesso!"], 200);
+          return response()->json(["mensagem" => "Voucher validado com sucesso!"]);
         } else {
           return response()->json(['error' => 'Erro ao validar voucher'], 500);
         }

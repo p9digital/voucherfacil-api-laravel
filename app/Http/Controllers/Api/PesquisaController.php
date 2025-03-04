@@ -56,6 +56,6 @@ class PesquisaController extends Controller {
 			$promocao['vouchersResgatados'] = $leadsCount;
 		}
 
-		return response()->json(['data' => $promocao], 200);
+		return response()->json(['data' => $promocao]);
 	}
 }

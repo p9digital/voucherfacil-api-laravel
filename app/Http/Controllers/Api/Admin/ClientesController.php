@@ -147,7 +147,7 @@ class ClientesController extends Controller {
         Log::error('Cliente NÃO deletado', ['nome' => $cliente->nome]);
       }
 
-      return response()->json(['message' => 'Cliente removido com sucesso!'], 200);
+      return response()->json(['message' => 'Cliente removido com sucesso!']);
     }
 
     return response()->json(['error' => 'Unauthorized'], 401);

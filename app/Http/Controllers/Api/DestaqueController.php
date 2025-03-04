@@ -4,22 +4,32 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Destaque;
 use App\Models\Cidade;
 use App\Models\Cliente;
+use App\Models\Promocao;
 
 class DestaqueController extends Controller {
   public function list(Request $request) {
-    $destaques = Destaque::with('cliente', 'cidade', 'promocao.fotos')
-      ->whereHas("promocao", function ($query) {
-        $query->where("pesquisa", "0");
-      })
+    $destaques = Promocao::with('cliente', 'fotos')
+      ->where(["pesquisa" => "0", "mostrar" => "1", "status" => "1"])
       ->orderBy("created_at", "DESC")
-      ->where("status", "1")
       ->get();
 
-    return response()->json(["data" => $destaques], 200);
+    return response()->json(["data" => $destaques]);
   }
+
+  // Falta implementar CRUD de destaques?
+  // public function list(Request $request) {
+  //   $destaques = Destaque::with('cliente', 'cidade', 'promocao.fotos')
+  //     ->whereHas("promocao", function ($query) {
+  //       $query->where("pesquisa", "0");
+  //     })
+  //     ->orderBy("created_at", "DESC")
+  //     ->where("status", "1")
+  //     ->get();
+
+  //   return response()->json(["data" => $destaques]);
+  // }
 
   public function porCidade($uf, $pathCidade) {
     $cidade = Cidade::where([

@@ -17,7 +17,7 @@
     | Dados      |               |
     | ------------- |--------------:|
     | Nome:     | {{$interesse->nome}}      |
-    | Promocao:     | {{$promocao->titulo}}      |
+    | Promoção:     | {{$promocao->titulo}}      |
     | Cliente:     | {{$promocao->cliente->nomeFantasia}}      |
     | Telefone:      | {{$interesse->celular}} |
     | Email:      | {{$interesse->email}} |
@@ -38,7 +38,7 @@
     {{-- Footer --}}
     @slot('footer')
         @component('mail::footer')
-            &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
+            &copy; {{ date('Y') }} {{ config('app.name') }}.
         @endcomponent
     @endslot
 @endcomponent
