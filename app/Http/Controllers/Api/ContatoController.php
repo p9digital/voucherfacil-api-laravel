@@ -26,10 +26,10 @@ class ContatoController extends Controller {
       if (config('app.env') === "production") {
         Mail::to(['comercial@voucherfacil.com.br'])
           ->bcc('notificacoesleads@publi9.com.br')
-          ->send(new \App\Mail\Contato($contato));
+          ->queue(new \App\Mail\Contato($contato));
       } else {
         Mail::to(['dev@p9.digital'])
-          ->send(new \App\Mail\Contato($contato));
+          ->queue(new \App\Mail\Contato($contato));
       }
 
       return response()->json(['data' => $contato]);
@@ -45,10 +45,10 @@ class ContatoController extends Controller {
       if (config('app.env') === "production") {
         Mail::to(['comercial@voucherfacil.com.br'])
           ->bcc('notificacoesleads@publi9.com.br')
-          ->send(new \App\Mail\Divulgue($divulgue));
+          ->queue(new \App\Mail\Divulgue($divulgue));
       } else {
         Mail::to(['dev@p9.digital'])
-          ->send(new \App\Mail\Divulgue($divulgue));
+          ->queue(new \App\Mail\Divulgue($divulgue));
       }
 
       return response()->json(['data' => $divulgue]);

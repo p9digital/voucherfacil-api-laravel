@@ -29,21 +29,19 @@ class Kernel extends ConsoleKernel {
     date_default_timezone_set('America/Sao_Paulo');
 
     $schedule->call(function () {
-      Log::info('Cron job executado' . date("Y-m-d H:i:s"));
+      Log::info("Executando Cron Job de disparo de e-mails e SMS");
 
       $hoje = date("Y-m-d");
-      if ($hoje != "2018-06-12") {
-        $leads = Lead::where("data_voucher", $hoje)->get();
-        foreach ($leads as $lead) {
-          $promocao = Promocao::find($lead->promocao_id);
-          \App\Jobs\SmsAviso::dispatch($lead, $promocao);
+      $leads = Lead::where("data_voucher", $hoje)->get();
+      foreach ($leads as $lead) {
+        $promocao = Promocao::find($lead->promocao_id);
+        \App\Jobs\SmsAviso::dispatch($lead, $promocao);
 
-          Log::info('Enviando e-mail para ' . $lead->email);
-          $date = date('d/m/Y', strtotime($lead->data_voucher));
-          $lead->dia = $date;
-          Mail::to([$lead->email])
-            ->queue(new \App\Mail\Aviso($lead, $promocao, $lead->unidade, $date, $lead->periodo->nome));
-        }
+        Log::info('Enviando e-mail para ' . $lead->email);
+        $date = date('d/m/Y', strtotime($lead->data_voucher));
+        $lead->dia = $date;
+        Mail::to([$lead->email])
+          ->queue(new \App\Mail\Aviso($lead, $promocao, $lead->unidade, $date, $lead->periodo->nome));
       }
     })->timezone('America/Sao_Paulo')->dailyAt('08:00');
 

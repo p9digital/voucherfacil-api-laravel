@@ -2,7 +2,7 @@
 # Agendamento
 
 <br>
-## {{$unidade->cliente->razaoSocial ?? ''}} {{$unidade->nome ?? ''}} - {{$promocao->titulo ?? ''}}
+{{$unidade->cliente->razaoSocial ?? ''}} {{$unidade->nome ?? ''}} - {{$promocao->titulo ?? ''}}
 
 
 <x-mail::table>
@@ -13,7 +13,7 @@
 | Celular:      | {{$agendamento->telefone}} |
 | Email:      | {{$agendamento->email}} |
 | Pessoas:      | {{$agendamento->pessoas}} |
-| Origem:      | {{$agendamento->origem}} |
+| Origem:      | {{$agendamento->origem ? $agendamento->origem : "--"}} |
 | Gerado em:      | {{date("d/m/Y H:i")}} |
 </x-mail::table>
 

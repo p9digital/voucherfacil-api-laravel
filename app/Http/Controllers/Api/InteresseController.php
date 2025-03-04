@@ -20,10 +20,10 @@ class InteresseController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(["notificacaoleads@p9.digital"])
-        ->send(new MailInteresse($interesse, $promocao));
+        ->queue(new MailInteresse($interesse));
     } else {
       Mail::to(["dev@p9.digital"])
-        ->send(new MailInteresse($interesse, $promocao));
+        ->queue(new MailInteresse($interesse));
     }
 
     return response()->json(['data' => $interesse]);

@@ -11,7 +11,7 @@ body *:not(html):not(style):not(br):not(tr):not(code) {
 body {
     -webkit-text-size-adjust: none;
     background-color: #ffffff;
-    color: #718096;
+    color: #406096;
     height: 100%;
     line-height: 1.4;
     margin: 0;
@@ -38,11 +38,11 @@ a img {
 /* Typography */
 
 h1 {
-    color: #3d4852;
+    color: #406096;
     font-size: 18px;
     font-weight: bold;
     margin-top: 0;
-    text-align: left;
+    text-align: center;
 }
 
 h2 {
@@ -201,7 +201,7 @@ img {
 }
 
 .table td {
-    color: #74787e;
+    color: #406096;
     font-size: 15px;
     line-height: 18px;
     margin: 0;
@@ -309,7 +309,7 @@ img {
     margin-bottom: 0;
 }
 .voucher .descricao {
-    color: #406096;
+    color: #718096;
     font-size: 16px;
 }
 .voucher .voucher-wrapper {
@@ -403,7 +403,6 @@ img {
 }
 .voucher .informacoes .regras {
     display: inline-block;
-    width: 50%;
 }
 .voucher .informacoes .regras h3 {
     color: #406096;
@@ -415,11 +414,6 @@ img {
 }
 .voucher .informacoes .regras p {
     text-align: left;
-}
-.voucher .informacoes .localizacao {
-    float: right;
-    padding-left: 80px;
-    width: 50%;
 }
 .voucher .informacoes .localizacao h3 {
     color: #406096;

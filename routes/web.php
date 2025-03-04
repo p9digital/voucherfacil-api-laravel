@@ -11,11 +11,22 @@ Route::get('/', function () {
 /*MailTest*/
 Route::controller(MailTestController::class)->group(function () {
   Route::prefix('mail')->group(function () {
+    Route::get('agendamento', 'agendamento');
     Route::get('agendamento/{id}', 'agendamento');
-    Route::get('lead/{id}', 'lead');
-    Route::get('voucher/{id}', 'voucher');
-    Route::get('contato/{id}', 'contato');
+    Route::get('aviso', 'aviso');
     Route::get('aviso/{id}', 'aviso');
+    Route::get('contato', 'contato');
+    Route::get('contato/{id}', 'contato');
+    Route::get('divulgue', 'divulgue');
+    Route::get('divulgue/{id}', 'divulgue');
+    Route::get('interesse', 'interesse');
+    Route::get('interesse/{id}', 'interesse');
+    Route::get('lead', 'lead');
+    Route::get('lead/{id}', 'lead');
+    Route::get('pesquisa', 'pesquisa');
+    Route::get('pesquisa/{id}', 'pesquisa');
+    Route::get('voucher', 'voucher');
+    Route::get('voucher/{id}', 'voucher');
   });
 
   Route::get('sms/aviso/{sms?}/{email?}', 'smsAviso');

@@ -21,9 +21,9 @@ class Interesse extends Mailable {
   public $interesse;
   public $promocao;
 
-  public function __construct($interesse, $promocao) {
+  public function __construct($interesse) {
     $this->interesse = $interesse;
-    $this->promocao = $promocao;
+    $this->promocao = $interesse->promocao;
   }
 
   /**

@@ -15,16 +15,30 @@ use App\Models\Unidade;
 class Pesquisa extends Mailable {
   use Queueable, SerializesModels;
 
+  public $agendamento;
+  public $promocao;
+  public $respostas;
+  public $unidade;
+  public $dia;
+  public $periodo;
+
   /**
    * Create a new message instance.
    */
-  public function __construct(
-    protected Lead $voucher,
-    protected Promocao $promocao,
-    protected Unidade $unidade,
-    protected $dia,
-    protected $periodo
-  ) {
+  public function __construct($agendamento, $promocao, $unidade, $dia, $periodo) {
+    $this->agendamento = $agendamento;
+    $this->promocao = $promocao;
+    $this->unidade = $unidade;
+    $this->dia = $dia;
+    $this->periodo = $periodo;
+
+    $pesquisa = $agendamento->pesquisa;
+    $this->respostas = array();
+    $pesquisas = json_decode($pesquisa->pesquisas);
+    $respostas = json_decode($pesquisa->respostas);
+    for ($i = 0; $i < count($pesquisas); $i++) {
+      $this->respostas[$i] = array("id" => $i + 1, "pergunta" => $pesquisas[$i]->pergunta, "resposta" => $respostas->{$i});
+    }
   }
 
   /**
@@ -32,7 +46,7 @@ class Pesquisa extends Mailable {
    */
   public function envelope(): Envelope {
     return new Envelope(
-      subject: $this->voucher->nome . ', o número do seu Voucher Fácil no ' . $this->unidade->cliente->razaoSocial . '!',
+      subject: $this->agendamento->nome . ', o número do seu Voucher Fácil no ' . $this->unidade->cliente->razaoSocial . '!',
     );
   }
 
@@ -43,11 +57,12 @@ class Pesquisa extends Mailable {
     return new Content(
       markdown: 'mail.pesquisa',
       with: [
-        'voucher' => $this->voucher,
+        'agendamento' => $this->agendamento,
         'promocao' => $this->promocao,
         'unidade' => $this->unidade,
         'dia' => $this->dia,
         'periodo' => $this->periodo,
+        'respostas' => $this->respostas,
       ],
     );
   }

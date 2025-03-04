@@ -142,7 +142,7 @@ class VouchersController extends Controller {
 
       $this->sendMailLeadAgendamentoPesquisa($lead, $promocao, $unidade, $date, $per->nome);
       Mail::to([$lead->email])
-        ->send(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $date, $per->nome));
+        ->queue(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $date, $per->nome));
 
       return response()->json(['data' => $lead]);
     } else {
@@ -189,10 +189,10 @@ class VouchersController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(['notificacaoleads@p9.digital'])
-        ->send(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
     } else {
       Mail::to(['teste@p9.digital'])
-        ->send(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
     }
 
     //dispara sms para o usuario
@@ -209,10 +209,10 @@ class VouchersController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(['notificacaoleads@p9.digital'])
-        ->send(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
     } else {
       Mail::to(['teste@p9.digital'])
-        ->send(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
     }
   }
 
@@ -222,7 +222,7 @@ class VouchersController extends Controller {
     QRCode::url("https://admin.voucherfacil.com.br/validar/$lead->voucher")->setSize(200)->setOutfile($path)->png();
 
     Mail::to([$lead->email])
-      ->send(new \App\Mail\Voucher($lead, $promocao, $unidade, $dia, $periodo));
+      ->queue(new \App\Mail\Voucher($lead, $promocao, $unidade, $dia, $periodo));
   }
 
   // OLD Actions
