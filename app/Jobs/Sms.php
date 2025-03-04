@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -38,10 +39,10 @@ class Sms implements ShouldQueue {
 
       $dataVoucher = date('d/m/Y', strtotime($this->lead->data_voucher)); // data formatada 01/01 as 00:00
       $periodoVoucher = ($this->lead->promocao->id == 5 && in_array($this->lead->unidade->id, [2, 12]) ? 'por ordem de chegada' : str_replace("à", "a", $this->lead->periodo->nome));
-      $unidadeTelefone = (isset($this->lead->unidade->telefone) && filled($this->lead->unidade->telefone)) ? $this->lead->unidade->telefone : false;
+      // $unidadeTelefone = (isset($this->lead->unidade->telefone) && filled($this->lead->unidade->telefone)) ? $this->lead->unidade->telefone : false;
       $corpo = "Agendado! Seu Voucher Fácil: {$this->lead->voucher} - {$dataVoucher} - {$periodoVoucher}. {$this->lead->promocao->cliente->razaoSocial} {$this->lead->unidade->nome} ({$this->lead->unidade->endereco}, {$this->lead->unidade->numero})";
 
-      $client = new \GuzzleHttp\Client();
+      $client = new Client();
 
       $data = http_build_query(array(
         'operacao' => 'ENVIO',

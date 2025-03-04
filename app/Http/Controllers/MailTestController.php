@@ -10,6 +10,7 @@ use App\Models\Interesse;
 use App\Models\Lead;
 use App\Models\Promocao;
 use App\Models\Unidade;
+use Throwable;
 
 class MailTestController extends Controller {
 
@@ -68,7 +69,6 @@ class MailTestController extends Controller {
     if ($id > 0) {
       $interesse = Interesse::find($id);
     }
-    $promocao = Promocao::find($interesse->promocao_id);
     return new \App\Mail\Interesse($interesse);
   }
 
@@ -113,18 +113,28 @@ class MailTestController extends Controller {
     foreach ($leads as $lead) {
       $promocao = Promocao::find($lead->promocao_id);
       if ($sms !== false && $sms !== 'false') {
-        Log::info('Enviando SMS para: ' . $lead->telefone);
-        \App\Jobs\SmsAviso::dispatch($lead, $promocao);
-        Log::info('SMS enviado para: ' . $lead->telefone);
+        try {
+          Log::info('Enviando SMS para: ' . $lead->telefone);
+          \App\Jobs\SmsAviso::dispatchSync($lead, $promocao);
+          Log::info('SMS enviado para: ' . $lead->telefone);
+          echo "SMS enviado para: " . $lead->telefone . "<br />";
+        } catch (Throwable $e) {
+          echo $e->getMessage() . "<br />";
+        }
       }
 
       if ($email !== false) {
-        Log::info('Enviando e-mail para: ' . $lead->email);
-        $date = date('d/m/Y', strtotime($lead->data_voucher));
-        $lead->dia = $date;
-        Mail::to([$lead->email])
-          ->send(new \App\Mail\Aviso($lead, $promocao, $lead->unidade, $date, $lead->periodo->nome));
-        Log::info('E-mail enviado para: ' . $lead->email);
+        try {
+          Log::info('Enviando e-mail para: ' . $lead->email);
+          $date = date('d/m/Y', strtotime($lead->data_voucher));
+          $lead->dia = $date;
+          Mail::to([$lead->email])
+            ->send(new \App\Mail\Aviso($lead, $promocao, $lead->unidade, $date, $lead->periodo->nome));
+          Log::info('E-mail enviado para: ' . $lead->email);
+          echo "E-mail enviado para: " . $lead->email . "<br />";
+        } catch (Throwable $e) {
+          echo $e->getMessage() . "<br />";
+        }
       }
     }
   }

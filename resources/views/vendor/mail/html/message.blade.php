@@ -2,7 +2,8 @@
   {{-- Header --}}
   <x-slot:header>
     <x-mail::header :url="config('app.url')">
-      {{ config('app.name') }}
+      <!-- {{ config('app.name') }} -->
+      <img class="brand-image" alt="Voucher Fácil" src="{{ url('imgs/main/logo-voucherfacil-branco.png') }}" />
     </x-mail::header>
   </x-slot:header>
 

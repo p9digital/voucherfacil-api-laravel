@@ -29,7 +29,7 @@ Route::controller(MailTestController::class)->group(function () {
     Route::get('voucher/{id}', 'voucher');
   });
 
-  Route::get('sms/aviso/{sms?}/{email?}', 'smsAviso');
+  Route::get('disparar/aviso/{sms?}/{email?}', 'smsAviso');
 });
 /*Fim MailTest*/
 

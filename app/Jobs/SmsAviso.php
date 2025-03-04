@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -38,12 +39,12 @@ class SmsAviso implements ShouldQueue {
     }
 
     try {
-      $dataVoucher = date('d/m/Y', strtotime($this->lead->data_voucher));
-      $periodoVoucher = ($this->lead->promocao->id == 5 && in_array($this->lead->unidade->id, [2, 12]) ? '' : str_replace("à", "a", $this->lead->periodo->nome) . " ");
-      $unidadeTelefone = (isset($this->lead->unidade->telefone) && filled($this->lead->unidade->telefone)) ? $this->lead->unidade->telefone : false;
+      // $dataVoucher = date('d/m/Y', strtotime($this->lead->data_voucher));
+      $periodoVoucher = ($this->lead->promocao->id == 5 && in_array($this->lead->unidade->id, [2, 12]) ? '' : str_replace("à", "a", $this->lead->periodo->nome));
+      // $unidadeTelefone = (isset($this->lead->unidade->telefone) && filled($this->lead->unidade->telefone)) ? $this->lead->unidade->telefone : false;
       $corpo = "Hoje {$periodoVoucher}voce tem um horario marcado no {$this->lead->promocao->cliente->razaoSocial} {$this->lead->unidade->nome} ({$this->lead->unidade->endereco}, {$this->lead->unidade->numero}). Seu Voucher Fácil: {$this->lead->voucher}";
 
-      $client = new \GuzzleHttp\Client();
+      $client = new Client();
 
       $data = http_build_query(array(
         'operacao' => 'ENVIO',
