@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Api\Admin\ClientesController as AdminClientesController;
 use App\Http\Controllers\Api\Admin\CommonController as AdminCommonController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Api\Admin\RelatoriosController as AdminRelatoriosController;
 use App\Http\Controllers\Api\Admin\PromocoesController as AdminPromocoesController;
 use App\Http\Controllers\Api\Admin\UnidadesController as AdminUnidadesController;
 use App\Http\Controllers\Api\Admin\UsuariosController as AdminUsuariosController;
@@ -117,6 +118,11 @@ Route::prefix('admin')->group(function () {
       Route::get('{cliente}', 'retrieve');
       Route::patch('{cliente}', 'update');
       Route::delete('{cliente}', 'destroy');
+    });
+
+    // Exports
+    Route::prefix('relatorios')->controller(AdminRelatoriosController::class)->group(function () {
+      Route::get('leads', 'leads');
     });
 
     // Promoções

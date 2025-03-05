@@ -23,7 +23,7 @@ class UnidadesController extends Controller {
     $skip = ($page - 1) * $page_size;
 
     $unidades = Unidade::with('cliente')->where('nome', 'like', "%$busca%");
-    if (!empty($request->cliente_id) && $request->cliente_id) {
+    if ($request->cliente_id) {
       $unidades = $unidades->where('cliente_id', $request->cliente_id);
     }
     $unidades = $unidades->orderByDesc('created_at');

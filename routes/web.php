@@ -39,5 +39,5 @@ Route::controller(HomeController::class)->group(function () {
 
   //QR Code
   Route::get('qrcode', 'qrcode')->name("qrcode");
-  Route::get('qrcode/{codigo}', 'qrcode')->name("qrcode.busca");
+  Route::get('qrcode/{codigo}', 'qrcode')->name("qrcode.codigo");
 });
