@@ -16,3 +16,6 @@ php artisan gerapath:cidades
 
 - Corrige paths das fotos
 php artisan fotos:corrige_path
+
+<!-- Comandos não executados no SSH, gerar Recipe -->
+
