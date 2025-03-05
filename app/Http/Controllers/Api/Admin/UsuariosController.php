@@ -17,15 +17,15 @@ class UsuariosController extends Controller {
       return response()->json(['error' => 'Unauthorized'], 401);
 
     $busca = $request->busca ? $request->busca : '';
-    $page = $request->page ? $request->page : 1;
-    $page_size = $request->page_size ? $request->page_size : 100;
+    $page = $request->pagina ? $request->pagina : 1;
+    $page_size = $request->page_size ? $request->page_size : 20;
     $skip = ($page - 1) * $page_size;
 
     $usuarios = User::with('cliente', 'unidade')->where('id', '<>', $user->id)->where(function ($query) use ($busca) {
       $query->where('name', 'like', "%$busca%")->orWhere('email', 'like', "%$busca%");
     });
     if ($user->tipo === 'a') {
-      $usuarios = $usuarios->where('tipo', '<>', 's')->where('cliente_id', $user->cliente_id);
+      $usuarios = $usuarios->whereNot('tipo', 's')->where('cliente_id', $user->cliente_id);
     }
     $usuarios = $usuarios->orderByDesc('created_at');
 
@@ -101,7 +101,7 @@ class UsuariosController extends Controller {
     return response()->json(['message' => "Usuário atualizado com sucesso!", 'data' => $usuario]);
   }
 
-  public function destroy(Request $request, User $usuario) {
+  public function remove(Request $request, User $usuario) {
     $user = $request->user();
     if ($user->id === $usuario->id)
       return response()->json(['error' => 'Unauthorized'], 401);

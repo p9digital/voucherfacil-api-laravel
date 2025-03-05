@@ -48,9 +48,10 @@ class ClientesController extends Controller {
       'razaoSocial' => 'required',
       'nomeFantasia' => 'required',
       'logo' => 'file',
-      'path' => 'required'
+      'path' => 'required|unique:clientes,path'
     ], [
       'required' => 'O campo :attribute é obrigatório.',
+      'unique' => 'O campo :attribute do cliente já existe. Cadastre com outro nome.',
       'file' => 'O campo :attribute deve ser um arquivo.'
     ])->validate();
 
@@ -73,7 +74,7 @@ class ClientesController extends Controller {
       $name = "banner1920";
       $extension = $request->file('bannerDesktop')->getClientOriginalExtension();
       $nameFile = "{$name}.{$extension}";
-      $cliente->bannerDesktop = $nameFile;
+      // $cliente->bannerDesktop = $nameFile;
       // $request->file('bannerDesktop')->storeAs("", $nameFile);
       //resize crop image
       $this->resizeCrop($request->file('bannerDesktop'), $cliente->path, $nameFile, 1920, 700);
@@ -82,7 +83,7 @@ class ClientesController extends Controller {
       $name = "banner750";
       $extension = $request->file('bannerMobile')->getClientOriginalExtension();
       $nameFile = "{$name}.{$extension}";
-      $cliente->bannerMobile = $nameFile;
+      // $cliente->bannerMobile = $nameFile;
       // $request->file('bannerMobile')->storeAs("", $nameFile);
       //resize crop image
       $this->resizeCrop($request->file('bannerMobile'), $cliente->path, $nameFile, 750, 400);
@@ -98,13 +99,18 @@ class ClientesController extends Controller {
   }
 
   public function update(Request $request, Cliente $cliente) {
-    Validator::make($request->all(), [
+    $validations = [
       'razaoSocial' => 'required',
       'nomeFantasia' => 'required',
       'logo' => 'file',
       'path' => 'required'
-    ], [
+    ];
+    if ($request->path !== $cliente->path) {
+      $validations['path'] = 'required|unique:clientes,path';
+    }
+    Validator::make($request->all(), $validations, [
       'required' => 'O campo :attribute é obrigatório.',
+      'unique' => 'O campo :attribute do cliente já existe. Cadastre com outro nome.',
       'file' => 'O campo :attribute deve ser um arquivo.'
     ])->validate();
 
@@ -138,7 +144,7 @@ class ClientesController extends Controller {
     return response()->json(['message' => "Cliente atualizado com sucesso!", 'data' => $cliente]);
   }
 
-  public function destroy(Request $request, Cliente $cliente) {
+  public function remove(Request $request, Cliente $cliente) {
     $user = $request->user();
     if ($user->tipo === 's') {
       $deletado = $cliente->delete();

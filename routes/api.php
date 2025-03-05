@@ -109,6 +109,7 @@ Route::prefix('admin')->group(function () {
       Route::get('geral', 'geral');
       Route::get('charts', 'charts');
       Route::get('ultimos30dias', 'ultimos30Dias');
+      Route::get('divulgue/{cliente}/{promocao}', 'divulgue');
     });
 
     // Clientes
@@ -117,12 +118,7 @@ Route::prefix('admin')->group(function () {
       Route::post('/', 'store');
       Route::get('{cliente}', 'retrieve');
       Route::patch('{cliente}', 'update');
-      Route::delete('{cliente}', 'destroy');
-    });
-
-    // Exports
-    Route::prefix('relatorios')->controller(AdminRelatoriosController::class)->group(function () {
-      Route::get('leads', 'leads');
+      Route::delete('{cliente}', 'remove');
     });
 
     // Promoções
@@ -131,12 +127,18 @@ Route::prefix('admin')->group(function () {
       Route::post('/', 'store');
       Route::get('{promocao}', 'retrieve');
       Route::patch('{promocao}', 'update');
-      Route::delete('{promocao}', 'destroy');
+      Route::delete('{promocao}', 'remove');
       Route::post('{promocao}/fotos', 'storeFotos');
       // Promoções unidades
       Route::post('{promocao}/promocao-unidade', 'storePromocaoUnidades');
       Route::post('{promocao}/promocao-unidade/desabilita-dias', 'desabilitaDias');
       Route::delete('{promocao}/promocao-unidade/habilita-dias', 'habilitaDias');
+    });
+
+    // Relatórios
+    Route::prefix('relatorios')->controller(AdminRelatoriosController::class)->group(function () {
+      Route::get('leads', 'leads');
+      Route::get('logs', 'logs');
     });
 
     // Unidades
@@ -145,13 +147,13 @@ Route::prefix('admin')->group(function () {
       Route::post('/', 'store');
       Route::get('{unidade}', 'retrieve');
       Route::patch('{unidade}', 'update');
-      Route::delete('{unidade}', 'destroy');
+      Route::delete('{unidade}', 'remove');
       // Períodos da unidade
       Route::post('{unidade}/periodos', 'storePeriodos');
-      Route::delete('{unidade}/periodos/{periodo}', 'destroyPeriodo');
+      Route::delete('{unidade}/periodos/{periodo}', 'removePeriodo');
       // Dias fechados da unidade
       Route::post('{unidade}/dias-fechados', 'storeDiaFechado');
-      Route::delete('{unidade}/dias-fechados/{fechado}', 'destroyDiaFechado');
+      Route::delete('{unidade}/dias-fechados/{fechado}', 'removeDiaFechado');
     });
 
     // Usuários
@@ -160,7 +162,7 @@ Route::prefix('admin')->group(function () {
       Route::post('/', 'store');
       Route::get('{usuario}', 'retrieve');
       Route::patch('{usuario}', 'update');
-      Route::delete('{usuario}', 'destroy');
+      Route::delete('{usuario}', 'remove');
     });
 
     // Vouchers

@@ -67,10 +67,7 @@ class UnidadesController extends Controller {
       'required' => 'O campo :attribute é obrigatório.'
     ])->validate();
 
-    $estado = Estado::where('uf', $request->estado_id)->first();
-
     $unidade = new Unidade($request->all());
-    $unidade->estado_id = $estado->id;
     if ($user->tipo === 'a') {
       $unidade->cliente_id = $user->cliente_id;
     }
@@ -113,7 +110,7 @@ class UnidadesController extends Controller {
     return response()->json(['message' => "Unidade atualizada com sucesso!", 'data' => $unidade]);
   }
 
-  public function destroy(Request $request, Unidade $unidade) {
+  public function remove(Request $request, Unidade $unidade) {
     $user = $request->user();
     if ($user->tipo === 's') {
       $deletado = $unidade->delete();
@@ -150,7 +147,7 @@ class UnidadesController extends Controller {
     return response()->json(['message' => "Unidade salva com sucesso!", 'data' => $unidade]);
   }
 
-  public function destroyPeriodo(Request $request, Unidade $unidade, Periodo $periodo) {
+  public function removePeriodo(Request $request, Unidade $unidade, Periodo $periodo) {
     $user = $request->user();
     if ($user->tipo === 's') {
       if (!$periodo->delete()) {
@@ -185,7 +182,7 @@ class UnidadesController extends Controller {
     return response()->json(['message' => "Dia fechado salvo com sucesso!", 'data' => $unidade]);
   }
 
-  public function destroyDiaFechado(Request $request, Unidade $unidade, Fechado $fechado) {
+  public function removeDiaFechado(Request $request, Unidade $unidade, Fechado $fechado) {
     $user = $request->user();
     if ($user->tipo === 's') {
       if (!$fechado->delete()) {

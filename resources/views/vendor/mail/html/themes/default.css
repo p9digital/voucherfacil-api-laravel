@@ -391,12 +391,11 @@ img {
     text-align: center;
 }
 .voucher .valores .valor {
-    float: right;
+    display: inline-block;
 }
 .voucher .valores .valor p {
     color: #406096;
     font-size: 20px;
-    font-weight: bold;
     line-height: 20px;
     margin-bottom: 0;
     margin-top: 25px;

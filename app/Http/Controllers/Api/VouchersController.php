@@ -10,6 +10,7 @@ use App\Models\Lead;
 use App\Models\Pesquisa;
 use App\Mail\Agendamento;
 use App\Mail\Pesquisa as AgendamentoPesquisa;
+use App\Models\Promocao;
 use LaravelQRCode\Facades\QRCode;
 
 class VouchersController extends Controller {
@@ -27,7 +28,7 @@ class VouchersController extends Controller {
     }
 
     $lead = new Lead($request->all());
-    $promocao = $lead->promocao;
+    $promocao = Promocao::find($request->promocao_id);
 
     $permiteGerarVoucher = $this->validacoesPromocao($request, $promocao);
     if ($permiteGerarVoucher) {
@@ -191,7 +192,7 @@ class VouchersController extends Controller {
       Mail::to(['notificacaoleads@p9.digital'])
         ->queue(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
     } else {
-      Mail::to(['teste@p9.digital'])
+      Mail::to(['dev@p9.digital'])
         ->queue(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
     }
 
@@ -211,7 +212,7 @@ class VouchersController extends Controller {
       Mail::to(['notificacaoleads@p9.digital'])
         ->queue(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
     } else {
-      Mail::to(['teste@p9.digital'])
+      Mail::to(['dev@p9.digital'])
         ->queue(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
     }
   }

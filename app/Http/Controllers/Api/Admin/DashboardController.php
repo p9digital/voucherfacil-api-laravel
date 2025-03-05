@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Cliente;
 use App\Models\Lead;
+use App\Models\Promocao;
 use App\Models\Unidade;
 
 class DashboardController extends Controller {
@@ -123,5 +125,19 @@ class DashboardController extends Controller {
 		}
 
 		return response()->json(['data' => $grafico]);
+	}
+
+	public function divulgue(Request $request, Cliente $cliente, $promocao) {
+		$user = $request->user();
+
+		if (!$user || !$promocao || ($user->tipo !== "s" && $user->cliente_id !== $cliente->id))
+			return response()->json(['error' => 'Unauthorized'], 401);
+		
+		if (!$promocao)
+			return response()->json(['error' => 'Não encontrado'], 404);
+
+		$promocaoData = Promocao::with("cliente", "promocaounidades.unidade")->find($promocao);
+
+		return response()->json(['data' => $promocaoData]);
 	}
 }

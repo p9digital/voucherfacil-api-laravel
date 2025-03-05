@@ -76,6 +76,9 @@ class PromocoesController extends Controller {
       return response()->json(['error' => 'Erro ao salvar a promoção. Tente novamente mais tarde.'], 500);
     }
 
+    $path = storage_path("app/public/" . $promocao->cliente->path . "/" . $promocao->path);
+    File::makeDirectory($path, 0777, true, true);
+
     return response()->json(['message' => "Promoção cadastrada com sucesso!", 'data' => $promocao]);
   }
 
@@ -100,6 +103,36 @@ class PromocoesController extends Controller {
     }
 
     return response()->json(['message' => "Promoção atualizada com sucesso!", 'data' => $promocao]);
+  }
+
+  public function remove(Request $request, Promocao $promocao) {
+    $user = $request->user();
+    if ($user->tipo !== "s" && $user->cliente_id !== $promocao->cliente_id)
+      return response()->json(['error' => 'Unauthorized'], 401);
+
+    try {
+      $promocao->destaques()->delete();
+      $promocao->interesses()->delete();
+      $pathPromocao = "app/public/" . $promocao->cliente->path . "/" . $promocao->path . "/";
+      unlink(storage_path($pathPromocao . "banner-750x420.png"));
+      unlink(storage_path($pathPromocao . "banner-1100x600.png"));
+      unlink(storage_path($pathPromocao . "banner-1920x700.png"));
+      unlink(storage_path($pathPromocao));
+      $promocao->fotos()->delete();
+      foreach ($promocao->promocaounidades() as $promocaoUnidade) {
+        $promocaoUnidade->desabilitados()->delete();
+        $promocaoUnidade->periodos()->delete();
+      }
+      $promocao->promocaounidades()->delete();
+
+      if (!$promocao->delete()) {
+        Log::error('Promoção NÃO deletada', ['nome' => $promocao->nome]);
+      }
+
+      return response()->json(['message' => 'Promoção removida com sucesso!']);
+    } catch (Throwable $e) {
+      Log::error('Erro ao deletar promoção', [$e->getMessage()]);
+    }
   }
 
   public function storeFotos(Request $request, Promocao $promocao) {
@@ -162,9 +195,6 @@ class PromocoesController extends Controller {
       return response()->json(['error' => 'Erro ao salvar as fotos. Tente novamente mais tarde.'], 500);
     }
 
-    $path = storage_path("app/public/" . $promocao->cliente->path . "/" . $promocao->path);
-    File::makeDirectory($path, 0777, true, true);
-
     return response()->json(['message' => "Fotos cadastradas com sucesso!", 'data' => $promocao]);
   }
 
@@ -203,7 +233,7 @@ class PromocoesController extends Controller {
     try {
       $desabilitado = Desabilitado::where(['promocaounidade_id' => $request->promocaounidade_id, 'dia' => $request->dia])->first();
       $desabilitado->delete();
-    } catch(Throwable $e) {
+    } catch (Throwable $e) {
       Log::error($e->getMessage());
       return response()->json(['error' => 'Erro ao habilitar dia'], 500);
     }

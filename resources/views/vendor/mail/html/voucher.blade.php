@@ -14,11 +14,11 @@
       <h2>{{$promocao->cliente->razaoSocial . " - " . $promocao->titulo}}</h2>
       <p><span>Agendamento:</span> {{$dia . " - " . ($promocao->id == 5 && in_array($unidade->id, [2, 12]) ? "Atendimento por ordem de chegada" : $periodo)}}</p>
     </div>
-    <div class="valor">
+    <!-- <div class="valor">
       @if(!empty($promocao->valor))
-      <p>R$ {{str_replace(".", ",", $promocao->valor)}}</p>
+      <p><strong>Valor do desconto</strong>: R$ {{str_replace(".", ",", $promocao->valor)}}</p>
       @endif
-    </div>
+    </div> -->
   </div>
   <div class="informacoes">
     <div class="regras">
