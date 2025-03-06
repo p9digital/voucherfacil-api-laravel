@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "850b2e3f595006cbea921c78d862bb1d",
+    "content-hash": "71d604d2897a2ddd36544108c92af1ca",
     "packages": [
         {
             "name": "brick/math",
@@ -3962,6 +3962,68 @@
                 }
             ],
             "time": "2025-01-13T13:04:43+00:00"
+        },
+        {
+            "name": "stidges/laravel-sparkpost-transport",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stidges/laravel-sparkpost-transport.git",
+                "reference": "7fef124620b1e90cb4b2c169150e59faa81a530c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stidges/laravel-sparkpost-transport/zipball/7fef124620b1e90cb4b2c169150e59faa81a530c",
+                "reference": "7fef124620b1e90cb4b2c169150e59faa81a530c",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.5",
+                "illuminate/contracts": "^11.0|^12.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "orchestra/testbench": "^9.0|^10.0",
+                "pestphp/pest": "^2.0|^3.0",
+                "pestphp/pest-plugin-laravel": "^2.0|^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Stidges\\SparkpostTransport\\SparkpostTransportServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Stidges\\SparkpostTransport\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stidges",
+                    "email": "info@stidges.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Sparkpost transport for Laravel 11.x",
+            "homepage": "https://github.com/stidges/laravel-sparkpost-transport",
+            "keywords": [
+                "laravel",
+                "mail",
+                "sparkpost"
+            ],
+            "support": {
+                "issues": "https://github.com/stidges/laravel-sparkpost-transport/issues",
+                "source": "https://github.com/stidges/laravel-sparkpost-transport/tree/v3.0.1"
+            },
+            "time": "2025-03-05T05:01:31+00:00"
         },
         {
             "name": "symfony/clock",
