@@ -50,7 +50,6 @@ class VouchersController extends Controller {
       //     Log::error("Erro ao enviar notificação para slack", ["nome" => $lead->nome, "email" => $lead->email]);
       // }
 
-      Log::info("Send email", [$lead, $date]);
       $this->sendMailLeadAgendamento($lead, $date);
       $this->sendMailVoucher($lead, $date);
 
