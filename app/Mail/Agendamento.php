@@ -8,9 +8,6 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Lead;
-use App\Models\Promocao;
-use App\Models\Unidade;
 
 class Agendamento extends Mailable {
   use Queueable, SerializesModels;
@@ -18,13 +15,18 @@ class Agendamento extends Mailable {
   /**
    * Create a new message instance.
    */
-  public function __construct(
-    protected Lead $agendamento,
-    protected Promocao $promocao,
-    protected Unidade $unidade,
-    protected $dia,
-    protected $periodo
-  ) {
+  public $lead;
+  public $promocao;
+  public $unidade;
+  public $periodo;
+  public $dia;
+
+  public function __construct($lead, $dia) {
+    $this->lead = $lead;
+    $this->promocao = $lead->promocao;
+    $this->unidade = $lead->unidade;
+    $this->periodo = $lead->periodo->nome;
+    $this->dia = $dia;
   }
 
   /**
@@ -43,7 +45,7 @@ class Agendamento extends Mailable {
     return new Content(
       markdown: 'mail.agendamento',
       with: [
-        'agendamento' => $this->agendamento,
+        'lead' => $this->lead,
         'promocao' => $this->promocao,
         'unidade' => $this->unidade,
         'dia' => $this->dia,
