@@ -14,20 +14,20 @@ class Pesquisa extends Mailable {
 
   public $lead;
   public $promocao;
-  public $respostas;
   public $unidade;
-  public $dia;
   public $periodo;
+  public $respostas;
+  public $dia;
 
   /**
    * Create a new message instance.
    */
-  public function __construct($lead, $promocao, $unidade, $dia, $periodo) {
+  public function __construct($lead, $dia) {
     $this->lead = $lead;
-    $this->promocao = $promocao;
-    $this->unidade = $unidade;
+    $this->promocao = $lead->promocao;
+    $this->unidade = $lead->unidade;
+    $this->periodo = $lead->periodo->nome;
     $this->dia = $dia;
-    $this->periodo = $periodo;
 
     $pesquisa = $lead->pesquisa;
     $this->respostas = array();

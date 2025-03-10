@@ -15,18 +15,18 @@ class Agendamento extends Mailable {
   /**
    * Create a new message instance.
    */
+  public $lead;
   public $promocao;
   public $unidade;
-  public $lead;
-  public $dia;
   public $periodo;
+  public $dia;
 
-  public function __construct($lead, $promocao, $unidade, $dia, $periodo) {
+  public function __construct($lead, $dia) {
     $this->lead = $lead;
-    $this->promocao = $promocao;
-    $this->unidade = $unidade;
+    $this->promocao = $lead->promocao;
+    $this->unidade = $lead->unidade;
+    $this->periodo = $lead->periodo->nome;
     $this->dia = $dia;
-    $this->periodo = $periodo;
   }
 
   /**

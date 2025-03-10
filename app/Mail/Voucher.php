@@ -17,18 +17,18 @@ class Voucher extends Mailable {
    *
    * @return void
    */
+  public $voucher;
   public $promocao;
   public $unidade;
-  public $voucher;
-  public $dia;
   public $periodo;
+  public $dia;
 
-  public function __construct($voucher, $promocao, $unidade, $dia, $periodo) {
-    $this->promocao = $promocao;
-    $this->unidade = $unidade;
+  public function __construct($voucher, $dia) {
     $this->voucher = $voucher;
+    $this->promocao = $voucher->promocao;
+    $this->unidade = $voucher->unidade;
+    $this->periodo = $voucher->periodo;
     $this->dia = $dia;
-    $this->periodo = $periodo;
   }
 
   /**
@@ -51,7 +51,7 @@ class Voucher extends Mailable {
         'promocao' => $this->promocao,
         'unidade' => $this->unidade,
         'dia' => $this->dia,
-        'periodo' => $this->periodo,
+        'periodo' => $this->periodo->nome,
       ],
     );
   }

@@ -52,8 +52,9 @@ class VouchersController extends Controller {
       //     Log::error("Erro ao enviar notificação para slack", ["nome" => $lead->nome, "email" => $lead->email]);
       // }
 
-      $this->sendMailLeadAgendamento($lead, $promocao, $unidade, $date, $per->nome);
-      $this->sendMailVoucher($lead, $promocao, $unidade, $date, $per->nome);
+      Log::info("Send email", [$lead, $date]);
+      $this->sendMailLeadAgendamento($lead, $date);
+      $this->sendMailVoucher($lead, $date);
 
       return response()->json(['data' => $lead]);
     } else {
@@ -139,9 +140,9 @@ class VouchersController extends Controller {
       $unidade = $lead->unidade;
       $per = $lead->periodo;
 
-      $this->sendMailLeadAgendamentoPesquisa($lead, $promocao, $unidade, $date, $per->nome);
+      $this->sendMailLeadAgendamentoPesquisa($lead, $date);
       Mail::to([$lead->email])
-        ->queue(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $date, $per->nome));
+        ->queue(new \App\Mail\Pesquisa($lead, $date));
 
       return response()->json(['data' => $lead]);
     } else {
@@ -175,7 +176,7 @@ class VouchersController extends Controller {
   }
 
   // Funcões de disparo de e-mail
-  private function sendMailLeadAgendamento($lead, $promocao, $unidade, $dia, $periodo) {
+  private function sendMailLeadAgendamento($lead, $dia) {
     // $hoje = date("Y-m-d H:i:s");
     // $horaCron = date("Y-m-d 08:00:00");
     // $dataHoje = date("Y-m-d");
@@ -188,10 +189,10 @@ class VouchersController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(['notificacaoleads@p9.digital'])
-        ->queue(new \App\Mail\Agendamento($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new \App\Mail\Agendamento($lead, $dia));
     } else {
       Mail::to(['dev@p9.digital'])
-        ->queue(new \App\Mail\Agendamento($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new \App\Mail\Agendamento($lead, $dia));
     }
 
     //dispara sms para o usuario
@@ -200,7 +201,7 @@ class VouchersController extends Controller {
     // }
   }
 
-  private function sendMailLeadAgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo) {
+  private function sendMailLeadAgendamentoPesquisa($lead, $dia) {
     //Verifica se sera necessario preencher origem
     if (empty($lead->origem)) {
       $lead->origem = "P9/Nao Identificado";
@@ -208,20 +209,20 @@ class VouchersController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(['notificacaoleads@p9.digital'])
-        ->queue(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new \App\Mail\Pesquisa($lead, $dia));
     } else {
       Mail::to(['dev@p9.digital'])
-        ->queue(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new \App\Mail\Pesquisa($lead, $dia));
     }
   }
 
-  private function sendMailVoucher($lead, $promocao, $unidade, $dia, $periodo) {
+  private function sendMailVoucher($lead, $dia) {
     //disparar email para o franqueado/franqueadora
     $path = storage_path("app/public/" . $lead->voucher . ".png");
     QRCode::url("https://admin.voucherfacil.com.br/validar/$lead->voucher")->setSize(200)->setOutfile($path)->png();
 
     Mail::to([$lead->email])
-      ->queue(new \App\Mail\Voucher($lead, $promocao, $unidade, $dia, $periodo));
+      ->queue(new \App\Mail\Voucher($lead, $dia));
   }
 
   // OLD Actions
