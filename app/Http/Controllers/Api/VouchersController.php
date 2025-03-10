@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
-use App\Models\Lead;
-use App\Models\Pesquisa;
 use App\Mail\Agendamento;
 use App\Mail\Pesquisa as AgendamentoPesquisa;
+use App\Models\Lead;
+use App\Models\Pesquisa;
 use App\Models\Promocao;
 use LaravelQRCode\Facades\QRCode;
 

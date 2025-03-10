@@ -8,9 +8,6 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Lead;
-use App\Models\Promocao;
-use App\Models\Unidade;
 
 class Pesquisa extends Mailable {
   use Queueable, SerializesModels;

@@ -34,9 +34,6 @@ Route::controller(MailTestController::class)->group(function () {
 /*Fim MailTest*/
 
 Route::controller(HomeController::class)->group(function () {
-  //Busca fila SMS
-  Route::get('filaSms', "filaSms");
-
   //QR Code
   Route::get('qrcode', 'qrcode')->name("qrcode");
   Route::get('qrcode/{codigo}', 'qrcode')->name("qrcode.codigo");
