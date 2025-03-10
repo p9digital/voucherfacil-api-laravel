@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
-use App\Mail\Agendamento;
-use App\Mail\Pesquisa as AgendamentoPesquisa;
 use App\Models\Lead;
 use App\Models\Pesquisa;
 use App\Models\Promocao;
@@ -190,10 +188,10 @@ class VouchersController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(['notificacaoleads@p9.digital'])
-        ->queue(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new \App\Mail\Agendamento($lead, $promocao, $unidade, $dia, $periodo));
     } else {
       Mail::to(['dev@p9.digital'])
-        ->queue(new Agendamento($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new \App\Mail\Agendamento($lead, $promocao, $unidade, $dia, $periodo));
     }
 
     //dispara sms para o usuario
@@ -210,10 +208,10 @@ class VouchersController extends Controller {
 
     if (config('app.env') === "production") {
       Mail::to(['notificacaoleads@p9.digital'])
-        ->queue(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $dia, $periodo));
     } else {
       Mail::to(['dev@p9.digital'])
-        ->queue(new AgendamentoPesquisa($lead, $promocao, $unidade, $dia, $periodo));
+        ->queue(new \App\Mail\Pesquisa($lead, $promocao, $unidade, $dia, $periodo));
     }
   }
 
