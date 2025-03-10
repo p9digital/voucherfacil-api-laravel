@@ -27,7 +27,7 @@ class Voucher extends Mailable {
     $this->voucher = $voucher;
     $this->promocao = $voucher->promocao;
     $this->unidade = $voucher->unidade;
-    $this->periodo = $voucher->periodo;
+    $this->periodo = $voucher->periodo->nome;
     $this->dia = $dia;
   }
 
@@ -51,7 +51,7 @@ class Voucher extends Mailable {
         'promocao' => $this->promocao,
         'unidade' => $this->unidade,
         'dia' => $this->dia,
-        'periodo' => $this->periodo->nome,
+        'periodo' => $this->periodo,
       ],
     );
   }

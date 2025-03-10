@@ -6,7 +6,7 @@
     <span class="texto">Voucher:</span>
     <span class="texto-voucher">{{$voucher->voucher}}</span>
   </div>
-  <div style="text-align:center;"><img src="https://app.voucherfacil.com.br/storage/{{$voucher->voucher}}.png" /></div>
+  <div style="text-align:center;"><img src="{{env('APP_URL')}}/storage/{{$voucher->voucher}}.png" /></div>
   <br />
   <p>Apresente o número do voucher ou mostre essa tela no celular</p>
   <div class="valores">

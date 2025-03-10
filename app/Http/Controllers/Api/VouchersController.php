@@ -43,8 +43,6 @@ class VouchersController extends Controller {
 
       $date = date('d/m/Y', strtotime($lead->data_voucher));
       $lead->dia = $date;
-      $unidade = $lead->unidade;
-      $per = $lead->periodo;
 
       // try {
       //     $lead->notify(new \App\Notifications\Lead($lead));
@@ -137,8 +135,6 @@ class VouchersController extends Controller {
 
       $date = date('d/m/Y', strtotime($lead->data_voucher));
       $lead->dia = $date;
-      $unidade = $lead->unidade;
-      $per = $lead->periodo;
 
       $this->sendMailLeadAgendamentoPesquisa($lead, $date);
       Mail::to([$lead->email])
@@ -219,7 +215,7 @@ class VouchersController extends Controller {
   private function sendMailVoucher($lead, $dia) {
     //disparar email para o franqueado/franqueadora
     $path = storage_path("app/public/" . $lead->voucher . ".png");
-    QRCode::url("https://admin.voucherfacil.com.br/validar/$lead->voucher")->setSize(200)->setOutfile($path)->png();
+    QRCode::url(env("ADMIN_URL") . "/validar/$lead->voucher")->setSize(200)->setOutfile($path)->png();
 
     Mail::to([$lead->email])
       ->queue(new \App\Mail\Voucher($lead, $dia));
