@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class Pesquisa extends Mailable {
   use Queueable, SerializesModels;
 
-  public $agendamento;
+  public $lead;
   public $promocao;
   public $respostas;
   public $unidade;
@@ -22,14 +22,14 @@ class Pesquisa extends Mailable {
   /**
    * Create a new message instance.
    */
-  public function __construct($agendamento, $promocao, $unidade, $dia, $periodo) {
-    $this->agendamento = $agendamento;
+  public function __construct($lead, $promocao, $unidade, $dia, $periodo) {
+    $this->lead = $lead;
     $this->promocao = $promocao;
     $this->unidade = $unidade;
     $this->dia = $dia;
     $this->periodo = $periodo;
 
-    $pesquisa = $agendamento->pesquisa;
+    $pesquisa = $lead->pesquisa;
     $this->respostas = array();
     $pesquisas = json_decode($pesquisa->pesquisas);
     $respostas = json_decode($pesquisa->respostas);
@@ -43,7 +43,7 @@ class Pesquisa extends Mailable {
    */
   public function envelope(): Envelope {
     return new Envelope(
-      subject: $this->agendamento->nome . ', o número do seu Voucher Fácil no ' . $this->unidade->cliente->razaoSocial . '!',
+      subject: $this->lead->nome . ', o número do seu Voucher Fácil no ' . $this->unidade->cliente->razaoSocial . '!',
     );
   }
 
@@ -54,7 +54,7 @@ class Pesquisa extends Mailable {
     return new Content(
       markdown: 'mail.pesquisa',
       with: [
-        'agendamento' => $this->agendamento,
+        'lead' => $this->lead,
         'promocao' => $this->promocao,
         'unidade' => $this->unidade,
         'dia' => $this->dia,

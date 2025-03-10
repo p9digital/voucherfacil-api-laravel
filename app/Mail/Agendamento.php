@@ -17,12 +17,12 @@ class Agendamento extends Mailable {
    */
   public $promocao;
   public $unidade;
-  public $agendamento;
+  public $lead;
   public $dia;
   public $periodo;
 
-  public function __construct($agendamento, $promocao, $unidade, $dia, $periodo) {
-    $this->agendamento = $agendamento;
+  public function __construct($lead, $promocao, $unidade, $dia, $periodo) {
+    $this->lead = $lead;
     $this->promocao = $promocao;
     $this->unidade = $unidade;
     $this->dia = $dia;
@@ -45,7 +45,7 @@ class Agendamento extends Mailable {
     return new Content(
       markdown: 'mail.agendamento',
       with: [
-        'agendamento' => $this->agendamento,
+        'lead' => $this->lead,
         'promocao' => $this->promocao,
         'unidade' => $this->unidade,
         'dia' => $this->dia,

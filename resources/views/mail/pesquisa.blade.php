@@ -8,10 +8,10 @@
 | Dados      |               |
 | :------------- |--------------:|
 | Agendamento:     | **{{$dia . " - " . ($promocao->id == 5 && $unidade->id == 2 ? "ordem de chegada" : $periodo)}}**      |
-| Nome:     | {{$agendamento->nome}}      |
-| Celular:      | {{$agendamento->telefone}} |
-| Email:      | {{$agendamento->email}} |
-| CPF:      | {{$agendamento->cpf}} |
+| Nome:     | {{$lead->nome}}      |
+| Celular:      | {{$lead->telefone}} |
+| Email:      | {{$lead->email}} |
+| CPF:      | {{$lead->cpf}} |
 @if($respostas)
   | ----- | ----- |
   | **Respostas**:      |  |
@@ -20,7 +20,7 @@
   @endforeach
   | ----- | ----- |
 @endif
-| Origem:      | {{$agendamento->origem ? $agendamento->origem : "--"}} |
+| Origem:      | {{$lead->origem ? $lead->origem : "--"}} |
 | Gerado em:      | {{date("d/m/Y H:i")}} |
 </x-mail::table>
 

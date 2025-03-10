@@ -9,11 +9,11 @@
 |       |               |
 | ------------- |--------------:|
 | Agendamento:     | **{{$dia . " - " . ($promocao->id == 5 && $unidade->id == 2 ? "ordem de chegada" : $periodo)}}**      |
-| Nome:     | {{$agendamento->nome}}      |
-| Celular:      | {{$agendamento->telefone}} |
-| Email:      | {{$agendamento->email}} |
-| Pessoas:      | {{$agendamento->pessoas}} |
-| Origem:      | {{$agendamento->origem ? $agendamento->origem : "--"}} |
+| Nome:     | {{$lead->nome}}      |
+| Celular:      | {{$lead->telefone}} |
+| Email:      | {{$lead->email}} |
+| Pessoas:      | {{$lead->pessoas}} |
+| Origem:      | {{$lead->origem ? $lead->origem : "--"}} |
 | Gerado em:      | {{date("d/m/Y H:i")}} |
 </x-mail::table>
 
