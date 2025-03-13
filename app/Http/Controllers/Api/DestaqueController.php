@@ -12,7 +12,8 @@ class DestaqueController extends Controller {
   public function list(Request $request) {
     $destaques = Promocao::with('cliente', 'fotos')
       ->where(["pesquisa" => "0", "mostrar" => "1", "status" => "1"])
-      ->orderBy("created_at", "DESC")
+      ->orderBy("dataFim", "DESC")
+      ->orderBy("dataInicio", "DESC")
       ->get();
 
     return response()->json(["data" => $destaques]);
